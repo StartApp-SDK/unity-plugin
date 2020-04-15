@@ -75,6 +75,6 @@ public class Sample : MonoBehaviour {
     }
 
     void LoadInterstitial() {
-        ad.LoadAd(InterstitialAd.AdType.Video);
+        ad.LoadAd(InterstitialAd.AdType.OfferWall);
     }
 }

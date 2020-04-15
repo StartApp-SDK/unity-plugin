@@ -1,4 +1,4 @@
-[StartApp][] InApp SDK Unity Wrapper
+[StartApp][] InApp SDK Unity Plugin
 ======================================
 
 Follow the [documentation][] for the SDK integration
