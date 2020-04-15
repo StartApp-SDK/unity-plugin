@@ -31,7 +31,7 @@ namespace StartApp
 
         public InterstitialAdAndroid()
         {
-            mjStartAppAd = new AndroidJavaObject("com.startapp.android.publish.adsCommon.StartAppAd", AdSdkAndroid.ImplInstance.Activity);
+            mjStartAppAd = new AndroidJavaObject("com.startapp.sdk.adsbase.StartAppAd", AdSdkAndroid.ImplInstance.Activity);
             mjStartAppAd.Call("setVideoListener", new ImplementationVideoListener(this));
         }
 
@@ -60,7 +60,7 @@ namespace StartApp
         {
             readonly InterstitialAdAndroid mParent;
 
-            public ImplementationAdEventListener(InterstitialAdAndroid parent) : base("com.startapp.android.publish.adsCommon.adListeners.AdEventListener")
+            public ImplementationAdEventListener(InterstitialAdAndroid parent) : base("com.startapp.sdk.adsbase.adlisteners.AdEventListener")
             {
                 mParent = parent;
             }
@@ -81,7 +81,7 @@ namespace StartApp
         {
             readonly InterstitialAdAndroid mParent;
 
-            public ImplementationAdDisplayListener(InterstitialAdAndroid parent) : base("com.startapp.android.publish.adsCommon.adListeners.AdDisplayListener")
+            public ImplementationAdDisplayListener(InterstitialAdAndroid parent) : base("com.startapp.sdk.adsbase.adlisteners.AdDisplayListener")
             {
                 mParent = parent;
             }
@@ -106,7 +106,7 @@ namespace StartApp
         {
             readonly InterstitialAdAndroid mParent;
 
-            public ImplementationVideoListener(InterstitialAdAndroid parent) : base("com.startapp.android.publish.adsCommon.VideoListener")
+            public ImplementationVideoListener(InterstitialAdAndroid parent) : base("com.startapp.sdk.adsbase.VideoListener")
             {
                 mParent = parent;
             }
@@ -119,7 +119,7 @@ namespace StartApp
 
         static AndroidJavaObject GetJAdType(AdType adMode)
         {
-            var jModeClass = new AndroidJavaClass("com.startapp.android.publish.adsCommon.StartAppAd$AdMode");
+            var jModeClass = new AndroidJavaClass("com.startapp.sdk.adsbase.StartAppAd$AdMode");
             switch (adMode)
             {
                 case AdType.Automatic: return jModeClass.GetStatic<AndroidJavaObject>("AUTOMATIC");

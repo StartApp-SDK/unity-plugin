@@ -58,9 +58,9 @@ static NSMutableDictionary<NSString*, STAUnityBanneriOS*>* _sAds;
         UIView* rootView = [self.class topViewControllerWithRootViewController:[UIApplication sharedApplication].keyWindow.rootViewController].view;
         
         if (tag == nil) {
-            self.startAppBanner = [[STABannerView alloc] initWithSize:STA_AutoAdSize autoOrigin:pos withView:rootView withDelegate:self];
+            self.startAppBanner = [[STABannerView alloc] initWithSize:STA_AutoAdSize autoOrigin:pos withDelegate:self];
         } else {
-            self.startAppBanner = [[STABannerView alloc] initWithSize:STA_AutoAdSize autoOrigin:pos withView:rootView withDelegate:self withAdTag:tag];
+            self.startAppBanner = [[STABannerView alloc] initWithSize:STA_AutoAdSize autoOrigin:pos withDelegate:self withAdTag:tag];
         }
         
         [rootView addSubview:self.startAppBanner];

@@ -118,7 +118,7 @@ namespace StartApp
 
                 if (mBanner == null)
                 {
-                    mBanner = new AndroidJavaObject("com.startapp.android.publish.ads.banner.bannerstandard.BannerStandard", AdSdkAndroid.ImplInstance.Activity);
+                    mBanner = new AndroidJavaObject("com.startapp.sdk.ads.banner.bannerstandard.BannerStandard", AdSdkAndroid.ImplInstance.Activity);
                     if (tag != null)
                     {
                         mBanner.Call("setAdTag", tag);
@@ -180,7 +180,7 @@ namespace StartApp
         {
             readonly BannerAdAndroid mParent;
 
-            public ImplementationBannerListener(BannerAdAndroid parent) : base("com.startapp.android.publish.ads.banner.BannerListener")
+            public ImplementationBannerListener(BannerAdAndroid parent) : base("com.startapp.sdk.ads.banner.BannerListener")
             {
                 mParent = parent;
             }
@@ -199,6 +199,10 @@ namespace StartApp
             void onClick(AndroidJavaObject banner)
             {
                 mParent.OnRaiseBannerClicked();
+            }
+
+            void onImpression(AndroidJavaObject banner)
+            {
             }
         }
     }

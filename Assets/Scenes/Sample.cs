@@ -18,14 +18,14 @@ using UnityEngine;
 using StartApp;
 using System;
 
-public class Sample : MonoBehaviour
-{
-	void Start()
-    {
-        var config = new SplashConfig
-        {
+public class Sample : MonoBehaviour {
+    private InterstitialAd ad;
+
+    void Start() {
+        var config = new SplashConfig {
             TemplateTheme = SplashConfig.Theme.Blaze
         };
+
         AdSdk.Instance.ShowSplash(config);
 
         AdSdk.Instance.SetUserConsent(
@@ -35,24 +35,22 @@ public class Sample : MonoBehaviour
 
         AdSdk.Instance.DisableReturnAds();
 
-        var ad = AdSdk.Instance.CreateInterstitial();
+        //AdSdk.Instance.ShowDefaultAd();
+
+        ad = AdSdk.Instance.CreateInterstitial();
         ad.RaiseAdLoaded += (sender, e) => {
             Debug.Log("Unity::RaiseAdLoaded");
-            if (ad.IsReady())
-            {
+            if (ad.IsReady()) {
                 ad.ShowAd("myTag");
             }
         };
-
-
-        //ad.LoadAd(InterstitialAd.AdType.Automatic);
-        AdSdk.Instance.ShowDefaultAd();
 
         ad.RaiseAdShown += (sender, e) => Debug.Log("Unity::RaiseAdShown");
         ad.RaiseAdLoadingFailed += (sender, e) => Debug.Log(string.Format("Unity::RaiseAdLoadingFailed {0}", e.Message));
         ad.RaiseAdClosed += (sender, e) => Debug.Log("Unity::RaiseAdClosed");
         ad.RaiseAdClicked += (sender, e) => Debug.Log("Unity::RaiseAdClicked");
         ad.RaiseAdVideoCompleted += (sender, e) => Debug.Log("Unity::RaiseAdVideoCompleted");
+        InvokeRepeating("LoadInterstitial", 10.0f, 0.0f);
 
 
         var banner = AdSdk.Instance.CreateBanner();
@@ -64,18 +62,19 @@ public class Sample : MonoBehaviour
         banner.RaiseBannerClicked += (sender, e) => Debug.Log("Unity::RaiseBannerClicked");
         banner.Hide();
 
-        if (!banner.IsShownInPosition(BannerAd.BannerPosition.Top))
-        {
+        if (!banner.IsShownInPosition(BannerAd.BannerPosition.Top)) {
             AdSdk.Instance.ShowDefaultBanner();
             banner.ShowInPosition(BannerAd.BannerPosition.Top);
         }
     }
 
-    void Update()
-    {
-        if (Input.GetKeyUp(KeyCode.Escape))
-        {
+    void Update() {
+        if (Input.GetKeyUp(KeyCode.Escape)) {
             AdSdk.Instance.OnBackPressed();
         }
+    }
+
+    void LoadInterstitial() {
+        ad.LoadAd(InterstitialAd.AdType.Video);
     }
 }
