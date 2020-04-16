@@ -36,7 +36,7 @@ void sta_setUserConsent(bool consent, const char* consentType, long timestamp) {
 
 void sta_disableReturnAd() {
     STAStartAppSDK* sdk = [STAStartAppSDK sharedInstance];
-    [sdk disableReturnAd];
+    sdk.returnAdEnabled = NO;
 }
 
 void sta_enterBackground() {
