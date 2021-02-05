@@ -1,4 +1,4 @@
-﻿/*
+/*
 Copyright 2019 StartApp Inc
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@ namespace StartApp
 {
     public abstract class AdSdk
     {
-        public static string WrapperVersion = "2.0.1";
+        public static string WrapperVersion = "2.0.2";
 
         private static AdSdk sInstance;
         public static AdSdk Instance
