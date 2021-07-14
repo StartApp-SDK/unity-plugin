@@ -67,7 +67,7 @@ namespace StartApp
             sta_preloadBanner(mGameObject.name);
         }
 		
-		public override void ShowInPosition(BannerPosition position, string tag, BannerType type)
+        public override void ShowInPosition(BannerPosition position, string tag, BannerType type)
         {
             switch (type)
             {
