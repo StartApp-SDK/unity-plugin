@@ -25,13 +25,20 @@ namespace StartApp
             Top = 1,
             Bottom
         }
+		
+        public enum BannerType
+        {
+            Regular,
+			Mrec,
+			Cover
+        }
 
         public event EventHandler RaiseBannerShown;
         public event EventHandler<MessageArgs> RaiseBannerLoadingFailed;
         public event EventHandler RaiseBannerClicked;
 
         public abstract void PreLoad();
-        public abstract void ShowInPosition(BannerPosition position = BannerPosition.Bottom, string tag = null);
+        public abstract void ShowInPosition(BannerPosition position = BannerPosition.Bottom, string tag = null, BannerType type = BannerType.Regular);
         public abstract void Hide();
         public abstract bool IsShownInPosition(BannerPosition position);
 

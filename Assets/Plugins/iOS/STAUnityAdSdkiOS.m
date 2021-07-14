@@ -28,7 +28,7 @@ void sta_initilize(const char* appId, const char* devId) {
     sdk.devID = [NSString stringWithUTF8String:devId];
 }
 
-void sta_setUserConsent(bool consent, const char* consentType, long timestamp) {
+void sta_setUserConsent(BOOL consent, const char* consentType, long timestamp) {
     STAStartAppSDK* sdk = [STAStartAppSDK sharedInstance];
     [sdk setUserConsent:consent forConsentType:[NSString stringWithUTF8String:consentType] withTimestamp:timestamp];
 }
@@ -36,6 +36,11 @@ void sta_setUserConsent(bool consent, const char* consentType, long timestamp) {
 void sta_disableReturnAd() {
     STAStartAppSDK* sdk = [STAStartAppSDK sharedInstance];
     sdk.returnAdEnabled = NO;
+}
+
+void sta_setTestAdsEnabled(BOOL enabled) {
+    STAStartAppSDK* sdk = [STAStartAppSDK sharedInstance];
+    sdk.testAdsEnabled = enabled;
 }
 
 void sta_enterBackground() {

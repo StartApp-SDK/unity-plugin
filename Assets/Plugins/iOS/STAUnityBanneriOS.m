@@ -31,19 +31,20 @@ static NSMutableDictionary<NSString*, STAUnityBanneriOS*>* _sAds;
 
 @implementation STAUnityBanneriOS
 
-+ (void)updateWithName:(NSString*)name position:(STAAdOrigin)pos tag:(NSString*)tag {
++ (void)updateWithName:(NSString*)name position:(STAAdOrigin)pos size:(STABannerSize)size tag:(NSString*)tag {
     if (_sAds == nil) {
         _sAds = [[NSMutableDictionary alloc] init];
     }
     
     STAUnityBanneriOS* banner = _sAds[name];
     if (banner == nil) {
-        STAUnityBanneriOS* ad = [[STAUnityBanneriOS alloc] initWithDelegateName:name position:pos tag:tag];
+        STAUnityBanneriOS* ad = [[STAUnityBanneriOS alloc] initWithDelegateName:name position:pos size:size tag:tag];
         _sAds[name] = ad;
         return;
     }
     
     [banner setPosition:pos];
+    [banner setBannerSize:size];
     
     if (tag != nil) {
         [banner setTag:tag];
@@ -52,15 +53,15 @@ static NSMutableDictionary<NSString*, STAUnityBanneriOS*>* _sAds;
     [banner show];
 }
 
-- (instancetype)initWithDelegateName:(NSString*)name position:(STAAdOrigin)pos tag:(NSString*)tag {
+- (instancetype)initWithDelegateName:(NSString*)name position:(STAAdOrigin)pos size:(STABannerSize)size tag:(NSString*)tag {
     if (self = [super init]) {
         self.position = pos;
         UIView* rootView = [self.class topViewControllerWithRootViewController:[UIApplication sharedApplication].keyWindow.rootViewController].view;
         
         if (tag == nil) {
-            self.startAppBanner = [[STABannerView alloc] initWithSize:STA_AutoAdSize autoOrigin:pos withDelegate:self];
+            self.startAppBanner = [[STABannerView alloc] initWithSize:size autoOrigin:pos withDelegate:self];
         } else {
-            self.startAppBanner = [[STABannerView alloc] initWithSize:STA_AutoAdSize autoOrigin:pos withDelegate:self withAdTag:tag];
+            self.startAppBanner = [[STABannerView alloc] initWithSize:size autoOrigin:pos withDelegate:self withAdTag:tag];
         }
         
         [rootView addSubview:self.startAppBanner];
@@ -76,6 +77,10 @@ static NSMutableDictionary<NSString*, STAUnityBanneriOS*>* _sAds;
 - (void)setPosition:(STAAdOrigin)pos {
     _position = pos;
     [self.startAppBanner setSTAAutoOrigin:pos];
+}
+
+- (void)setBannerSize:(STABannerSize)size {
+    [self.startAppBanner setSTABannerSize:size];
 }
 
 - (void)loadAd {
@@ -137,13 +142,35 @@ static NSMutableDictionary<NSString*, STAUnityBanneriOS*>* _sAds;
 
 void sta_addBanner(const char* gameObjectName, int position) {
     NSString* key = [NSString stringWithUTF8String:gameObjectName];
-    [STAUnityBanneriOS updateWithName:key position:position tag:nil];
+    [STAUnityBanneriOS updateWithName:key position:position size:STA_AutoAdSize tag:nil];
 }
 
 void sta_addBannerWithTag(const char* gameObjectName, int position, const char* tag) {
     NSString* key = [NSString stringWithUTF8String:gameObjectName];
     NSString* adTag = [NSString stringWithUTF8String:tag];
-    [STAUnityBanneriOS updateWithName:key position:position tag:adTag];
+    [STAUnityBanneriOS updateWithName:key position:position size:STA_AutoAdSize tag:adTag];
+}
+
+void sta_addMrec(const char* gameObjectName, int position) {
+    NSString* key = [NSString stringWithUTF8String:gameObjectName];
+    [STAUnityBanneriOS updateWithName:key position:position size:STA_MRecAdSize_300x250 tag:nil];
+}
+
+void sta_addMrecWithTag(const char* gameObjectName, int position, const char* tag) {
+    NSString* key = [NSString stringWithUTF8String:gameObjectName];
+    NSString* adTag = [NSString stringWithUTF8String:tag];
+    [STAUnityBanneriOS updateWithName:key position:position size:STA_MRecAdSize_300x250 tag:adTag];
+}
+
+void sta_addCover(const char* gameObjectName, int position) {
+    NSString* key = [NSString stringWithUTF8String:gameObjectName];
+    [STAUnityBanneriOS updateWithName:key position:position size:STA_CoverAdSize tag:nil];
+}
+
+void sta_addCoverWithTag(const char* gameObjectName, int position, const char* tag) {
+    NSString* key = [NSString stringWithUTF8String:gameObjectName];
+    NSString* adTag = [NSString stringWithUTF8String:tag];
+    [STAUnityBanneriOS updateWithName:key position:position size:STA_CoverAdSize tag:adTag];
 }
 
 void sta_preloadBanner(const char* gameObjectName) {

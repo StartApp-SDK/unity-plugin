@@ -67,14 +67,35 @@ namespace StartApp
             sta_preloadBanner(mGameObject.name);
         }
 
-        public override void ShowInPosition(BannerPosition position, string tag)
+        public override void ShowInPosition(BannerPosition position, string tag, BannerType type)
         {
-            if (tag == null)
-            {
-                sta_addBanner(mGameObject.name, (int)position);
-                return;
-            }
-            sta_addBannerWithTag(mGameObject.name, (int)position, tag);
+			switch (type)
+			{
+				case BannerType.Mrec:
+            		if (tag == null)
+            		{
+                		sta_addMrec(mGameObject.name, (int)position);
+                		return;
+            		}
+            		sta_addMrecWithTag(mGameObject.name, (int)position, tag);
+					return;
+				case BannerType.Cover:
+        			if (tag == null)
+        			{
+            			sta_addCover(mGameObject.name, (int)position);
+            			return;
+        			}
+        			sta_addCoverWithTag(mGameObject.name, (int)position, tag);
+					return;
+				default:
+	            	if (tag == null)
+	            	{
+	                	sta_addBanner(mGameObject.name, (int)position);
+	                	return;
+	            	}
+	            	sta_addBannerWithTag(mGameObject.name, (int)position, tag);
+					return;
+			}
         }
 
         public override void Hide()
@@ -112,6 +133,18 @@ namespace StartApp
 
         [DllImport("__Internal")]
         static extern void sta_addBannerWithTag(string gameObjectName, int position, string tag);
+		
+        [DllImport("__Internal")]
+        static extern void sta_addMrec(string gameObjectName, int position);
+
+        [DllImport("__Internal")]
+        static extern void sta_addMrecWithTag(string gameObjectName, int position, string tag);
+		
+        [DllImport("__Internal")]
+        static extern void sta_addCover(string gameObjectName, int position);
+
+        [DllImport("__Internal")]
+        static extern void sta_addCoverWithTag(string gameObjectName, int position, string tag);
 
         [DllImport("__Internal")]
         static extern void sta_preloadBanner(string gameObjectName);

@@ -127,6 +127,11 @@ namespace StartApp
         {
             return false;
         }
+		
+		public override void SetTestAdsEnabled(bool enabled)
+		{
+			sta_setTestAdsEnabled(enabled);
+		}
 
         public void UpdateOrientation()
         {
@@ -237,6 +242,9 @@ namespace StartApp
 
         [DllImport("__Internal")]
         static extern void sta_setUserConsent(bool consent, string consentType, long timestamp);
+		
+        [DllImport("__Internal")]
+        static extern void sta_setTestAdsEnabled(bool enabled);
 
         [DllImport("__Internal")]
         static extern void sta_disableReturnAd();

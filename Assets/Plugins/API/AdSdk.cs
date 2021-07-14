@@ -20,7 +20,7 @@ namespace StartApp
 {
     public abstract class AdSdk
     {
-        public static string WrapperVersion = "2.0.4";
+        public static string WrapperVersion = "2.1.0";
 
         private static AdSdk sInstance;
         public static AdSdk Instance
@@ -45,6 +45,7 @@ namespace StartApp
         public abstract void ShowSplash(SplashConfig config = null);
         public abstract void DisableReturnAds();
         public abstract bool OnBackPressed();
+		public abstract void SetTestAdsEnabled(bool enabled);
 
         public InterstitialAd ShowDefaultAd(InterstitialAd.AdType mode = InterstitialAd.AdType.Automatic, string tag = null)
         {

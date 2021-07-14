@@ -22,18 +22,16 @@ public class Sample : MonoBehaviour {
     private InterstitialAd ad;
 
     void Start() {
+		AdSdk.Instance.DisableReturnAds();
+		AdSdk.Instance.SetTestAdsEnabled(true);
         var config = new SplashConfig {
             TemplateTheme = SplashConfig.Theme.Blaze
         };
-
         AdSdk.Instance.ShowSplash(config);
-
         AdSdk.Instance.SetUserConsent(
             "pas",
             true,
             (long)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds);
-
-        AdSdk.Instance.DisableReturnAds();
 
         //AdSdk.Instance.ShowDefaultAd();
 
@@ -52,10 +50,9 @@ public class Sample : MonoBehaviour {
         ad.RaiseAdVideoCompleted += (sender, e) => Debug.Log("Unity::RaiseAdVideoCompleted");
         InvokeRepeating("LoadInterstitial", 10.0f, 0.0f);
 
-
         var banner = AdSdk.Instance.CreateBanner();
         banner.PreLoad();
-        banner.ShowInPosition(BannerAd.BannerPosition.Top, "myBannerTag");
+        banner.ShowInPosition(BannerAd.BannerPosition.Top, "myBannerTag", BannerAd.BannerType.Mrec);
 
         banner.RaiseBannerShown += (sender, e) => Debug.Log("Unity::RaiseBannerShown");
         banner.RaiseBannerLoadingFailed += (sender, e) => Debug.Log(string.Format("Unity::RaiseBannerLoadingFailed {0}", e.Message));
