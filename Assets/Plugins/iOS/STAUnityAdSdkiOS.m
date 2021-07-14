@@ -24,7 +24,6 @@
 
 void sta_initilize(const char* appId, const char* devId) {
     STAStartAppSDK* sdk = [STAStartAppSDK sharedInstance];
-    sdk.isUnityEnvironment = YES;
     sdk.appID = [NSString stringWithUTF8String:appId];
     sdk.devID = [NSString stringWithUTF8String:devId];
 }
@@ -51,7 +50,7 @@ void sta_enterForeground() {
 
 void sta_setUnityVersion(const char* unityVersion) {
     STAStartAppSDK* sdk = [STAStartAppSDK sharedInstance];
-    [sdk setUnityVersion:[NSString stringWithUTF8String:unityVersion]];
+    [sdk addWrapperWithName:@"Unity" version:[NSString stringWithCString:unityVersion encoding:NSUTF8StringEncoding]];
 }
 
 void sta_setUnitySupportedOrientations(int supportedOrientations) {
