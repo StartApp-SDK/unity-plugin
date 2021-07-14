@@ -29,8 +29,8 @@ namespace StartApp
         public enum BannerType
         {
             Regular,
-			Mrec,
-			Cover
+            Mrec,
+            Cover
         }
 
         public event EventHandler RaiseBannerShown;

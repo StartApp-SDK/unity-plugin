@@ -66,36 +66,36 @@ namespace StartApp
         {
             sta_preloadBanner(mGameObject.name);
         }
-
-        public override void ShowInPosition(BannerPosition position, string tag, BannerType type)
+		
+		public override void ShowInPosition(BannerPosition position, string tag, BannerType type)
         {
-			switch (type)
-			{
-				case BannerType.Mrec:
-            		if (tag == null)
-            		{
-                		sta_addMrec(mGameObject.name, (int)position);
-                		return;
-            		}
-            		sta_addMrecWithTag(mGameObject.name, (int)position, tag);
-					return;
-				case BannerType.Cover:
-        			if (tag == null)
-        			{
-            			sta_addCover(mGameObject.name, (int)position);
-            			return;
-        			}
-        			sta_addCoverWithTag(mGameObject.name, (int)position, tag);
-					return;
-				default:
-	            	if (tag == null)
-	            	{
-	                	sta_addBanner(mGameObject.name, (int)position);
-	                	return;
-	            	}
-	            	sta_addBannerWithTag(mGameObject.name, (int)position, tag);
-					return;
-			}
+            switch (type)
+            {
+                case BannerType.Mrec:
+                    if (tag == null)
+                    {
+                        sta_addMrec(mGameObject.name, (int)position);
+                        return;
+                    }
+                    sta_addMrecWithTag(mGameObject.name, (int)position, tag);
+                    return;
+                case BannerType.Cover:
+                    if (tag == null)
+                    {
+                        sta_addCover(mGameObject.name, (int)position);
+                        return;
+                    }
+                    sta_addCoverWithTag(mGameObject.name, (int)position, tag);
+                    return;
+                default:
+                    if (tag == null)
+                    {
+                        sta_addBanner(mGameObject.name, (int)position);
+                        return;
+                    }
+                    sta_addBannerWithTag(mGameObject.name, (int)position, tag);
+                    return;
+             }
         }
 
         public override void Hide()

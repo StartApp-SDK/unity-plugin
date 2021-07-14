@@ -118,11 +118,11 @@ namespace StartApp
 
                 if (mBanner == null)
                 {
-					string jClass = type == BannerAd.BannerType.Mrec
-						? "com.startapp.sdk.ads.banner.Mrec"
-						: type == BannerAd.BannerType.Cover
-							? "com.startapp.sdk.ads.banner.Cover"
-							: "com.startapp.sdk.ads.banner.bannerstandard.BannerStandard";
+                    string jClass = type == BannerAd.BannerType.Mrec
+                        ? "com.startapp.sdk.ads.banner.Mrec"
+                        : type == BannerAd.BannerType.Cover
+                            ? "com.startapp.sdk.ads.banner.Cover"
+                            : "com.startapp.sdk.ads.banner.bannerstandard.BannerStandard";
                     mBanner = new AndroidJavaObject(jClass, AdSdkAndroid.ImplInstance.Activity);
                     if (tag != null)
                     {

@@ -128,10 +128,10 @@ namespace StartApp
             return false;
         }
 		
-		public override void SetTestAdsEnabled(bool enabled)
-		{
-			sta_setTestAdsEnabled(enabled);
-		}
+        public override void SetTestAdsEnabled(bool enabled)
+        {
+            sta_setTestAdsEnabled(enabled);
+        }
 
         public void UpdateOrientation()
         {

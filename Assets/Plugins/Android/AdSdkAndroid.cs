@@ -115,12 +115,12 @@ namespace StartApp
             mEnableReturnAds = false;
         }
 		
-		public override void SetTestAdsEnabled(bool enabled)
-		{
-			Setup();
-			var sdk = new AndroidJavaClass("com.startapp.sdk.adsbase.StartAppSDK");
-			sdk.CallStatic("setTestAdsEnabled", enabled);
-		}
+        public override void SetTestAdsEnabled(bool enabled)
+        {
+            Setup();
+            var sdk = new AndroidJavaClass("com.startapp.sdk.adsbase.StartAppSDK");
+            sdk.CallStatic("setTestAdsEnabled", enabled);
+        }
 
         public override void SetUserConsent(string consentType, bool enabled, long timestamp)
         {

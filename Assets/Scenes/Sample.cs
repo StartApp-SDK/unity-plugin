@@ -22,8 +22,8 @@ public class Sample : MonoBehaviour {
     private InterstitialAd ad;
 
     void Start() {
-		AdSdk.Instance.DisableReturnAds();
-		AdSdk.Instance.SetTestAdsEnabled(true);
+        AdSdk.Instance.DisableReturnAds();
+        AdSdk.Instance.SetTestAdsEnabled(true);
         var config = new SplashConfig {
             TemplateTheme = SplashConfig.Theme.Blaze
         };
