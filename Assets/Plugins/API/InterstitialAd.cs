@@ -32,6 +32,7 @@ namespace StartApp
         public event EventHandler RaiseAdLoaded;
         public event EventHandler<MessageArgs> RaiseAdLoadingFailed;
         public event EventHandler RaiseAdShown;
+        public event EventHandler RaiseAdImpressionSent;
         public event EventHandler RaiseAdClosed;
         public event EventHandler RaiseAdClicked;
         public event EventHandler RaiseAdVideoCompleted;
@@ -61,6 +62,15 @@ namespace StartApp
         protected void OnRaiseAdShown()
         {
             EventHandler handler = RaiseAdShown;
+            if (handler != null)
+            {
+                handler(this, null);
+            }
+        }
+
+        protected void OnRaiseAdImpressionSent()
+        {
+            EventHandler handler = RaiseAdImpressionSent;
             if (handler != null)
             {
                 handler(this, null);

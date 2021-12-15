@@ -44,6 +44,7 @@ public class Sample : MonoBehaviour {
         };
 
         ad.RaiseAdShown += (sender, e) => Debug.Log("Unity::RaiseAdShown");
+        ad.RaiseAdImpressionSent += (sender, e) => Debug.Log("Unity::RaiseAdImpressionSent");
         ad.RaiseAdLoadingFailed += (sender, e) => Debug.Log(string.Format("Unity::RaiseAdLoadingFailed {0}", e.Message));
         ad.RaiseAdClosed += (sender, e) => Debug.Log("Unity::RaiseAdClosed");
         ad.RaiseAdClicked += (sender, e) => Debug.Log("Unity::RaiseAdClicked");
@@ -55,6 +56,7 @@ public class Sample : MonoBehaviour {
         banner.ShowInPosition(BannerAd.BannerPosition.Top, "myBannerTag", BannerAd.BannerType.Mrec);
 
         banner.RaiseBannerShown += (sender, e) => Debug.Log("Unity::RaiseBannerShown");
+        banner.RaiseBannerImpressionSent += (sende, e) => Debug.Log("Unity::RaiseBannerImpressionSent");
         banner.RaiseBannerLoadingFailed += (sender, e) => Debug.Log(string.Format("Unity::RaiseBannerLoadingFailed {0}", e.Message));
         banner.RaiseBannerClicked += (sender, e) => Debug.Log("Unity::RaiseBannerClicked");
         banner.Hide();
