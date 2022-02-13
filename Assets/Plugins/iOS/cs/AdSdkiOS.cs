@@ -81,14 +81,14 @@ namespace StartApp
             }
         }
 
-        public override InterstitialAd CreateInterstitial()
+        public override InterstitialAd CreateInterstitial(string tag = null)
         {
-            return new InterstitialAdiOS();
+            return new InterstitialAdiOS(tag);
         }
 
-        public override BannerAd CreateBanner()
+        public override BannerAd CreateBanner(string tag = null)
         {
-            return new BannerAdiOS();
+            return new BannerAdiOS(tag);
         }
 
         public override void SetUserConsent(string consentType, bool enabled, long timestamp)

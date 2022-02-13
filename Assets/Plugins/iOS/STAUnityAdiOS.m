@@ -48,24 +48,26 @@ static NSMutableDictionary<NSString*, STAUnityAdiOS*>* _sAds;
     return self;
 }
 
-- (void)loadAd {
-    [self.startAppAd loadAdWithDelegate:self];
+- (void)loadAdWithTag:(NSString*)tag {
+    STAAdPreferences* adprefs  = [[STAAdPreferences alloc] init];
+    adprefs.adTag = tag;
+    [self.startAppAd loadAdWithDelegate:self withAdPreferences:adprefs];
 }
 
-- (void)loadRewardedVideoAd {
-    [self.startAppAd loadRewardedVideoAdWithDelegate:self];
+- (void)loadRewardedVideoAdWithTag:(NSString*)tag {
+    STAAdPreferences* adprefs  = [[STAAdPreferences alloc] init];
+    adprefs.adTag = tag;
+    [self.startAppAd loadRewardedVideoAdWithDelegate:self withAdPreferences:adprefs];
 }
 
-- (void)loadVideoAd {
-    [self.startAppAd loadVideoAdWithDelegate:self];
+- (void)loadVideoAdWithTag:(NSString*)tag {
+    STAAdPreferences* adprefs  = [[STAAdPreferences alloc] init];
+    adprefs.adTag = tag;
+    [self.startAppAd loadVideoAdWithDelegate:self withAdPreferences:adprefs];
 }
 
 - (void)showAd {
     [self.startAppAd showAd];
-}
-
-- (void)showAdWithAdTag:(NSString*)tag {
-    [self.startAppAd showAdWithAdTag:tag];
 }
 
 - (BOOL)shouldAutoRotate {
@@ -110,10 +112,11 @@ static NSMutableDictionary<NSString*, STAUnityAdiOS*>* _sAds;
 
 // =======================================================================
 
-void sta_loadAd(const char* gameObjectName) {
+void sta_loadAd(const char* gameObjectName, const char* tag) {
+    NSString* adTag = [NSString stringWithUTF8String:tag];
     NSString* key = [NSString stringWithUTF8String:gameObjectName];
     STAUnityAdiOS* ad = [STAUnityAdiOS createWithName:key];
-    [ad loadAd];
+    [ad loadAdWithTag:adTag];
 }
 
 void sta_showAd(const char* gameObjectName) {
@@ -121,22 +124,18 @@ void sta_showAd(const char* gameObjectName) {
     [_sAds[key] showAd];
 }
 
-void sta_showAdWithTag(const char* gameObjectName, const char* tag) {
-    NSString* key = [NSString stringWithUTF8String:gameObjectName];
+void sta_loadRewardedVideoAd(const char* gameObjectName, const char* tag) {
     NSString* adTag = [NSString stringWithUTF8String:tag];
-    [_sAds[key] showAdWithAdTag:adTag];
-}
-
-void sta_loadRewardedVideoAd(const char* gameObjectName) {
     NSString* key = [NSString stringWithUTF8String:gameObjectName];
     STAUnityAdiOS* ad = [STAUnityAdiOS createWithName:key];
-    [ad loadRewardedVideoAd];
+    [ad loadRewardedVideoAdWithTag:adTag];
 }
     
-void sta_loadVideoAd(const char* gameObjectName) {
+void sta_loadVideoAd(const char* gameObjectName, const char* tag) {
+    NSString* adTag = [NSString stringWithUTF8String:tag];
     NSString* key = [NSString stringWithUTF8String:gameObjectName];
     STAUnityAdiOS* ad = [STAUnityAdiOS createWithName:key];
-    [ad loadVideoAd];
+    [ad loadVideoAdWithTag:adTag];
 }
 
 BOOL sta_isReady(const char* gameObjectName) {

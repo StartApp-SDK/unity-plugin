@@ -37,7 +37,7 @@ namespace StartApp
         public event EventHandler RaiseAdVideoCompleted;
 
         public abstract void LoadAd(AdType mode = AdType.Automatic);
-        public abstract bool ShowAd(string tag = null);
+        public abstract bool ShowAd();
         public abstract bool IsReady();
 
         protected void OnRaiseAdLoaded()

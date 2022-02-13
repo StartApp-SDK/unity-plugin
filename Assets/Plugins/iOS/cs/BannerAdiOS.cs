@@ -26,14 +26,16 @@ namespace StartApp
     {
         bool mDisposed;
         readonly GameObject mGameObject = new GameObject();
+        readonly string mAdTag;
 
         static BannerAdiOS()
         {
             AdSdkiOS.ImplInstance.Setup();
         }
 
-        public BannerAdiOS()
+        public BannerAdiOS(string tag = null)
         {
+            mAdTag = tag;
             mGameObject.name = mGameObject.GetInstanceID().ToString();
             mGameObject.AddComponent<ListenerComponent>().Parent = this;
         }
@@ -61,39 +63,34 @@ namespace StartApp
         {
             Dispose(false);
         }
-
-        public override void PreLoad()
-        {
-            sta_preloadBanner(mGameObject.name);
-        }
 		
-        public override void ShowInPosition(BannerPosition position, string tag, BannerType type)
+        public override void ShowInPosition(BannerPosition position, BannerType type)
         {
             switch (type)
             {
                 case BannerType.Mrec:
-                    if (tag == null)
+                    if (mAdTag == null)
                     {
                         sta_addMrec(mGameObject.name, (int)position);
                         return;
                     }
-                    sta_addMrecWithTag(mGameObject.name, (int)position, tag);
+                    sta_addMrecWithTag(mGameObject.name, (int)position, mAdTag);
                     return;
                 case BannerType.Cover:
-                    if (tag == null)
+                    if (mAdTag == null)
                     {
                         sta_addCover(mGameObject.name, (int)position);
                         return;
                     }
-                    sta_addCoverWithTag(mGameObject.name, (int)position, tag);
+                    sta_addCoverWithTag(mGameObject.name, (int)position, mAdTag);
                     return;
                 default:
-                    if (tag == null)
+                    if (mAdTag == null)
                     {
                         sta_addBanner(mGameObject.name, (int)position);
                         return;
                     }
-                    sta_addBannerWithTag(mGameObject.name, (int)position, tag);
+                    sta_addBannerWithTag(mGameObject.name, (int)position, mAdTag);
                     return;
              }
         }
@@ -145,9 +142,6 @@ namespace StartApp
 
         [DllImport("__Internal")]
         static extern void sta_addCoverWithTag(string gameObjectName, int position, string tag);
-
-        [DllImport("__Internal")]
-        static extern void sta_preloadBanner(string gameObjectName);
 
         [DllImport("__Internal")]
         static extern void sta_hideBanner(string gameObjectName);

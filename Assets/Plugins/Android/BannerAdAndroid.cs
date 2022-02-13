@@ -34,6 +34,7 @@ namespace StartApp
 
         AndroidJavaObject mBanner;
         BannerPosition mCurrentPosition;
+        string mAdTag;
         bool mDisposed;
 
         static BannerAdAndroid()
@@ -51,6 +52,11 @@ namespace StartApp
 
             var viewClass = new AndroidJavaClass("android.view.View");
             VISIBLE = viewClass.GetStatic<int>("VISIBLE");
+        }
+
+        public BannerAdAndroid(string tag = null)
+        {
+            mAdTag = tag;
         }
 
         public void Dispose()
@@ -77,15 +83,7 @@ namespace StartApp
             Dispose(false);
         }
 
-        public override void PreLoad()
-        {
-            AdSdkAndroid.ImplInstance.Activity.Call("runOnUiThread", new AndroidJavaRunnable(() =>
-            {
-                mBanner.Call("loadAd");
-            }));
-        }
-
-        public override void ShowInPosition(BannerPosition position, string tag, BannerType type)
+        public override void ShowInPosition(BannerPosition position, BannerType type)
         {
             var jContent = new AndroidJavaObject("java.lang.String", "content");
             var jId = new AndroidJavaObject("java.lang.String", "id");
@@ -123,11 +121,14 @@ namespace StartApp
                         : type == BannerAd.BannerType.Cover
                             ? "com.startapp.sdk.ads.banner.Cover"
                             : "com.startapp.sdk.ads.banner.bannerstandard.BannerStandard";
-                    mBanner = new AndroidJavaObject(jClass, AdSdkAndroid.ImplInstance.Activity);
-                    if (tag != null)
+
+                    var adprefs = new AndroidJavaObject("com.startapp.sdk.adsbase.model.AdPreferences");
+                    if (mAdTag != null)
                     {
-                        mBanner.Call("setAdTag", tag);
+                        adprefs.Call<AndroidJavaObject>("setAdTag", mAdTag);
                     }
+
+                    mBanner = new AndroidJavaObject(jClass, AdSdkAndroid.ImplInstance.Activity, adprefs);
                     mBanner.Call("setBannerListener", new ImplementationBannerListener(this));
 
                     layout.Call("addView", mBanner, bannerParams);

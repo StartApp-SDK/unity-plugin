@@ -20,7 +20,7 @@ namespace StartApp
 {
     public abstract class AdSdk
     {
-        public static string WrapperVersion = "2.1.0";
+        public static string WrapperVersion = "3.0.0";
 
         private static AdSdk sInstance;
         public static AdSdk Instance
@@ -39,8 +39,8 @@ namespace StartApp
             }
         }
 
-        public abstract InterstitialAd CreateInterstitial();
-        public abstract BannerAd CreateBanner();
+        public abstract InterstitialAd CreateInterstitial(string tag = null);
+        public abstract BannerAd CreateBanner(string tag = null);
         public abstract void SetUserConsent(string consentType, bool enabled, long timestamp);
         public abstract void ShowSplash(SplashConfig config = null);
         public abstract void DisableReturnAds();
@@ -49,16 +49,16 @@ namespace StartApp
 
         public InterstitialAd ShowDefaultAd(InterstitialAd.AdType mode = InterstitialAd.AdType.Automatic, string tag = null)
         {
-            var ad = CreateInterstitial();
-            ad.RaiseAdLoaded += (sender, e) => ad.ShowAd(tag);
+            var ad = CreateInterstitial(tag);
+            ad.RaiseAdLoaded += (sender, e) => ad.ShowAd();
             ad.LoadAd(mode);
             return ad;
         }
 
         public BannerAd ShowDefaultBanner(BannerAd.BannerPosition position = BannerAd.BannerPosition.Bottom, string tag = null)
         {
-            var banner = CreateBanner();
-            banner.ShowInPosition(position, tag);
+            var banner = CreateBanner(tag);
+            banner.ShowInPosition(position);
             return banner;
         }
     }

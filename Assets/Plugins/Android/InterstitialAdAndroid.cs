@@ -23,32 +23,34 @@ namespace StartApp
     public class InterstitialAdAndroid : InterstitialAd
     {
         readonly AndroidJavaObject mjStartAppAd;
+        readonly string mAdTag;
 
         static InterstitialAdAndroid()
         {
             AdSdkAndroid.ImplInstance.Setup();
         }
 
-        public InterstitialAdAndroid()
+        public InterstitialAdAndroid(string tag = null)
         {
             mjStartAppAd = new AndroidJavaObject("com.startapp.sdk.adsbase.StartAppAd", AdSdkAndroid.ImplInstance.Activity);
             mjStartAppAd.Call("setVideoListener", new ImplementationVideoListener(this));
+            mAdTag = tag;
         }
 
         public override void LoadAd(AdType mode)
         {
-            mjStartAppAd.Call("loadAd", GetJAdType(mode), new ImplementationAdEventListener(this));
-        }
-
-        public override bool ShowAd(string tag)
-        {
-            if (tag == null)
+            var adprefs = new AndroidJavaObject("com.startapp.sdk.adsbase.model.AdPreferences");
+            if (mAdTag != null)
             {
-                return mjStartAppAd.Call<bool>("showAd", new ImplementationAdDisplayListener(this));
+                adprefs.Call<AndroidJavaObject>("setAdTag", mAdTag);
             }
 
-            var objTag = new AndroidJavaObject("java.lang.String", tag);
-            return mjStartAppAd.Call<bool>("showAd", objTag, new ImplementationAdDisplayListener(this));
+            mjStartAppAd.Call("loadAd", GetJAdType(mode), adprefs, new ImplementationAdEventListener(this));
+        }
+
+        public override bool ShowAd()
+        {
+            return mjStartAppAd.Call<bool>("showAd", new ImplementationAdDisplayListener(this));
         }
 
         public override bool IsReady()

@@ -46,32 +46,23 @@ static NSMutableDictionary<NSString*, STAUnityBanneriOS*>* _sAds;
     [banner setPosition:pos];
     [banner setBannerSize:size];
     
-    if (tag != nil) {
-        [banner setTag:tag];
-    }
-    
     [banner show];
 }
 
 - (instancetype)initWithDelegateName:(NSString*)name position:(STAAdOrigin)pos size:(STABannerSize)size tag:(NSString*)tag {
     if (self = [super init]) {
         self.position = pos;
+        
+        self.startAppBanner = [[STABannerView alloc] initWithSize:size autoOrigin:pos withDelegate:self];
+        STAAdPreferences* adPreferences = [[STAAdPreferences alloc] init];
+        adPreferences.adTag = tag;
+        [self.startAppBanner setAdPreferneces:adPreferences];
+        
         UIView* rootView = [self.class topViewControllerWithRootViewController:[UIApplication sharedApplication].keyWindow.rootViewController].view;
-        
-        if (tag == nil) {
-            self.startAppBanner = [[STABannerView alloc] initWithSize:size autoOrigin:pos withDelegate:self];
-        } else {
-            self.startAppBanner = [[STABannerView alloc] initWithSize:size autoOrigin:pos withDelegate:self withAdTag:tag];
-        }
-        
         [rootView addSubview:self.startAppBanner];
         self.delegateName = name;
     }
     return self;
-}
-
-- (void)setTag:(NSString*)tag {
-    [self.startAppBanner setSTABannerAdTag:tag];
 }
 
 - (void)setPosition:(STAAdOrigin)pos {

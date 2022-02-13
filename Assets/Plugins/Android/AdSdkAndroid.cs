@@ -99,14 +99,14 @@ namespace StartApp
             }
         }
 
-        public override InterstitialAd CreateInterstitial()
+        public override InterstitialAd CreateInterstitial(string tag = null)
         {
-            return new InterstitialAdAndroid();
+            return new InterstitialAdAndroid(tag);
         }
 
-        public override BannerAd CreateBanner()
+        public override BannerAd CreateBanner(string tag = null)
         {
-            return new BannerAdAndroid();
+            return new BannerAdAndroid(tag);
         }
 
         public override void DisableReturnAds()
@@ -180,7 +180,7 @@ namespace StartApp
 
         public override bool OnBackPressed()
         {
-            var backAd = new InterstitialAdAndroid();
+            var backAd = new InterstitialAdAndroid(EXIT_AD_TAG);
             bool clicked = false;
 
             backAd.RaiseAdClosed += (sender, e) => {
@@ -192,7 +192,7 @@ namespace StartApp
 
             backAd.RaiseAdClicked += (sender, e) => clicked = true;
 
-            return backAd.ShowAd(EXIT_AD_TAG);
+            return backAd.ShowAd();
         }
 
         bool ReadDataFromTextFile()

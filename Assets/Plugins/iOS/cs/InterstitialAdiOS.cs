@@ -26,14 +26,16 @@ namespace StartApp
     {
         bool mDisposed;
         readonly GameObject mGameObject = new GameObject();
+        readonly string mAdTag;
 
         static InterstitialAdiOS()
         {
             AdSdkiOS.ImplInstance.Setup();
         }
 
-        public InterstitialAdiOS()
+        public InterstitialAdiOS(string tag = null)
         {
+            mAdTag = tag;
             mGameObject.name = mGameObject.GetInstanceID().ToString();
             mGameObject.AddComponent<ListenerComponent>().Parent = this;
         }
@@ -66,27 +68,21 @@ namespace StartApp
         {
             if (mode == AdType.Rewarded)
             {
-                sta_loadRewardedVideoAd(mGameObject.name);
+                sta_loadRewardedVideoAd(mGameObject.name, mAdTag);
             }
             else if (mode == AdType.Video)
             {
-                sta_loadVideoAd(mGameObject.name);
+                sta_loadVideoAd(mGameObject.name, mAdTag);
             }
             else
             {
-                sta_loadAd(mGameObject.name);
+                sta_loadAd(mGameObject.name, mAdTag);
             }
         }
 
-        public override bool ShowAd(string tag)
+        public override bool ShowAd()
         {
-            if (tag == null)
-            {
-                sta_showAd(mGameObject.name);
-                return true;
-            }
-
-            sta_showAdWithTag(mGameObject.name, tag);
+            sta_showAd(mGameObject.name);
             return true;
         }
 
@@ -131,19 +127,16 @@ namespace StartApp
         }
 
         [DllImport("__Internal")]
-        static extern void sta_loadAd(string gameObjectName);
+        static extern void sta_loadAd(string gameObjectName, string tag);
 
         [DllImport("__Internal")]
         static extern void sta_showAd(string gameObjectName);
 
         [DllImport("__Internal")]
-        static extern void sta_showAdWithTag(string gameObjectName, string tag);
+        static extern void sta_loadRewardedVideoAd(string gameObjectName, string tag);
 
         [DllImport("__Internal")]
-        static extern void sta_loadRewardedVideoAd(string gameObjectName);
-
-        [DllImport("__Internal")]
-        static extern void sta_loadVideoAd(string gameObjectName);
+        static extern void sta_loadVideoAd(string gameObjectName, string tag);
 
         [DllImport("__Internal")]
         static extern bool sta_isReady(string gameObjectName);

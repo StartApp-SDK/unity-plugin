@@ -33,13 +33,13 @@ public class Sample : MonoBehaviour {
             true,
             (long)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalMilliseconds);
 
-        //AdSdk.Instance.ShowDefaultAd();
+        // AdSdk.Instance.ShowDefaultAd();
 
-        ad = AdSdk.Instance.CreateInterstitial();
+        ad = AdSdk.Instance.CreateInterstitial("myTagForFullscreen");
         ad.RaiseAdLoaded += (sender, e) => {
             Debug.Log("Unity::RaiseAdLoaded");
             if (ad.IsReady()) {
-                ad.ShowAd("myTag");
+                ad.ShowAd();
             }
         };
 
@@ -50,9 +50,8 @@ public class Sample : MonoBehaviour {
         ad.RaiseAdVideoCompleted += (sender, e) => Debug.Log("Unity::RaiseAdVideoCompleted");
         InvokeRepeating("LoadInterstitial", 10.0f, 0.0f);
 
-        var banner = AdSdk.Instance.CreateBanner();
-        banner.PreLoad();
-        banner.ShowInPosition(BannerAd.BannerPosition.Top, "myBannerTag", BannerAd.BannerType.Mrec);
+        var banner = AdSdk.Instance.CreateBanner("myTagForBanner");
+        banner.ShowInPosition(BannerAd.BannerPosition.Top, BannerAd.BannerType.Mrec);
 
         banner.RaiseBannerShown += (sender, e) => Debug.Log("Unity::RaiseBannerShown");
         banner.RaiseBannerLoadingFailed += (sender, e) => Debug.Log(string.Format("Unity::RaiseBannerLoadingFailed {0}", e.Message));
@@ -60,6 +59,7 @@ public class Sample : MonoBehaviour {
         banner.Hide();
 
         if (!banner.IsShownInPosition(BannerAd.BannerPosition.Top)) {
+            // AdSdk.Instance.ShowDefaultBanner(BannerAd.BannerPosition.Bottom, "myBottomBanner");
             AdSdk.Instance.ShowDefaultBanner();
             banner.ShowInPosition(BannerAd.BannerPosition.Top);
         }
@@ -72,6 +72,6 @@ public class Sample : MonoBehaviour {
     }
 
     void LoadInterstitial() {
-        ad.LoadAd(InterstitialAd.AdType.OfferWall);
+        ad.LoadAd(InterstitialAd.AdType.Video);
     }
 }
