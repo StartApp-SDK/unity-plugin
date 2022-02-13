@@ -34,6 +34,7 @@ namespace StartApp
         }
 
         public event EventHandler RaiseBannerShown;
+        public event EventHandler RaiseBannerImpressionSent;
         public event EventHandler<MessageArgs> RaiseBannerLoadingFailed;
         public event EventHandler RaiseBannerClicked;
 
@@ -45,6 +46,15 @@ namespace StartApp
         protected void OnRaiseBannerShown()
         {
             EventHandler handler = RaiseBannerShown;
+            if (handler != null)
+            {
+                handler(this, null);
+            }
+        }
+
+        protected void OnRaiseBannerImpressionSent()
+        {
+            EventHandler handler = RaiseBannerImpressionSent;
             if (handler != null)
             {
                 handler(this, null);

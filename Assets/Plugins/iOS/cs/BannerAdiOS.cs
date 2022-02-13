@@ -114,6 +114,11 @@ namespace StartApp
                 Parent.OnRaiseBannerShown();
             }
 
+            void OnDidSendImpression()
+            {
+                Parent.OnRaiseBannerImpressionSent();
+            }
+
             void OnFailedLoadBanner(string error)
             {
                 Parent.OnRaiseBannerLoadingFailed(error);

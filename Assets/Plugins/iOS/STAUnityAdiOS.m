@@ -92,6 +92,10 @@ static NSMutableDictionary<NSString*, STAUnityAdiOS*>* _sAds;
     UnitySendMessage(self.delegateName.UTF8String, "OnDidShowAd", "");
 }
 
+- (void)didSendImpression:(STAAbstractAd *)ad {
+    UnitySendMessage(self.delegateName.UTF8String, "OnDidSendImpression", "");
+}
+
 - (void)failedShowAd:(STAAbstractAd*)ad withError:(NSError*)error {
 }
 

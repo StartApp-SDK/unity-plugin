@@ -110,6 +110,11 @@ namespace StartApp
                 Parent.OnRaiseAdShown();
             }
 
+            void OnDidSendImpression()
+            {
+                Parent.OnRaiseAdImpressionSent();
+            }
+
             void OnDidCloseAd()
             {
                 Parent.OnRaiseAdClosed();

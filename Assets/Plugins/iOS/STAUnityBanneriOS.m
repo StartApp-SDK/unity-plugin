@@ -121,6 +121,10 @@ static NSMutableDictionary<NSString*, STAUnityBanneriOS*>* _sAds;
     UnitySendMessage(self.delegateName.UTF8String, "OnDidShowBanner", "");
 }
 
+- (void)didSendImpressionForBannerAd:(STABannerView *)banner {
+    UnitySendMessage(self.delegateName.UTF8String, "OnDidSendImpression", "");
+}
+
 - (void)failedLoadBannerAd:(STABannerView*)banner withError:(NSError*)error {
     UnitySendMessage(self.delegateName.UTF8String, "OnFailedLoadBanner", error.localizedDescription.UTF8String);
 }
