@@ -35,9 +35,11 @@ namespace StartApp
 
         public BannerAdiOS(string tag = null)
         {
-            mAdTag = tag;
-            mGameObject.name = mGameObject.GetInstanceID().ToString();
-            mGameObject.AddComponent<ListenerComponent>().Parent = this;
+            #if !UNITY_EDITOR
+                mAdTag = tag;
+                mGameObject.name = mGameObject.GetInstanceID().ToString();
+                mGameObject.AddComponent<ListenerComponent>().Parent = this;
+            #endif
         }
 
         public void Dispose()
@@ -55,7 +57,11 @@ namespace StartApp
             {
                 // Free any other managed objects here.
             }
-            sta_removeBannerObject(mGameObject.name);
+
+            #if !UNITY_EDITOR
+                sta_removeBannerObject(mGameObject.name);
+            #endif
+
             mDisposed = true;
         }
 
@@ -66,43 +72,51 @@ namespace StartApp
 		
         public override void ShowInPosition(BannerPosition position, BannerType type)
         {
-            switch (type)
-            {
-                case BannerType.Mrec:
-                    if (mAdTag == null)
-                    {
-                        sta_addMrec(mGameObject.name, (int)position);
+            #if !UNITY_EDITOR
+                switch (type)
+                {
+                    case BannerType.Mrec:
+                        if (mAdTag == null)
+                        {
+                            sta_addMrec(mGameObject.name, (int)position);
+                            return;
+                        }
+                        sta_addMrecWithTag(mGameObject.name, (int)position, mAdTag);
                         return;
-                    }
-                    sta_addMrecWithTag(mGameObject.name, (int)position, mAdTag);
-                    return;
-                case BannerType.Cover:
-                    if (mAdTag == null)
-                    {
-                        sta_addCover(mGameObject.name, (int)position);
+                    case BannerType.Cover:
+                        if (mAdTag == null)
+                        {
+                            sta_addCover(mGameObject.name, (int)position);
+                            return;
+                        }
+                        sta_addCoverWithTag(mGameObject.name, (int)position, mAdTag);
                         return;
-                    }
-                    sta_addCoverWithTag(mGameObject.name, (int)position, mAdTag);
-                    return;
-                default:
-                    if (mAdTag == null)
-                    {
-                        sta_addBanner(mGameObject.name, (int)position);
+                    default:
+                        if (mAdTag == null)
+                        {
+                            sta_addBanner(mGameObject.name, (int)position);
+                            return;
+                        }
+                        sta_addBannerWithTag(mGameObject.name, (int)position, mAdTag);
                         return;
-                    }
-                    sta_addBannerWithTag(mGameObject.name, (int)position, mAdTag);
-                    return;
-             }
+                }
+            #endif
         }
 
         public override void Hide()
         {
-            sta_hideBanner(mGameObject.name);
+            #if !UNITY_EDITOR
+                sta_hideBanner(mGameObject.name);
+            #endif
         }
 
         public override bool IsShownInPosition(BannerPosition position)
         {
-            return sta_isShownInPosition(mGameObject.name, (int)position);
+            #if !UNITY_EDITOR
+                return sta_isShownInPosition(mGameObject.name, (int)position);
+            #else
+                return false;
+            #endif
         }
 
         class ListenerComponent : MonoBehaviour
@@ -130,32 +144,34 @@ namespace StartApp
             }
         }
 
-        [DllImport("__Internal")]
-        static extern void sta_addBanner(string gameObjectName, int position);
+        #if !UNITY_EDITOR
+            [DllImport("__Internal")]
+            static extern void sta_addBanner(string gameObjectName, int position);
 
-        [DllImport("__Internal")]
-        static extern void sta_addBannerWithTag(string gameObjectName, int position, string tag);
+            [DllImport("__Internal")]
+            static extern void sta_addBannerWithTag(string gameObjectName, int position, string tag);
 		
-        [DllImport("__Internal")]
-        static extern void sta_addMrec(string gameObjectName, int position);
+            [DllImport("__Internal")]
+            static extern void sta_addMrec(string gameObjectName, int position);
 
-        [DllImport("__Internal")]
-        static extern void sta_addMrecWithTag(string gameObjectName, int position, string tag);
+            [DllImport("__Internal")]
+            static extern void sta_addMrecWithTag(string gameObjectName, int position, string tag);
 		
-        [DllImport("__Internal")]
-        static extern void sta_addCover(string gameObjectName, int position);
+            [DllImport("__Internal")]
+            static extern void sta_addCover(string gameObjectName, int position);
 
-        [DllImport("__Internal")]
-        static extern void sta_addCoverWithTag(string gameObjectName, int position, string tag);
+            [DllImport("__Internal")]
+            static extern void sta_addCoverWithTag(string gameObjectName, int position, string tag);
 
-        [DllImport("__Internal")]
-        static extern void sta_hideBanner(string gameObjectName);
+            [DllImport("__Internal")]
+            static extern void sta_hideBanner(string gameObjectName);
 
-        [DllImport("__Internal")]
-        static extern bool sta_isShownInPosition(string gameObjectName, int position);
+            [DllImport("__Internal")]
+            static extern bool sta_isShownInPosition(string gameObjectName, int position);
 
-        [DllImport("__Internal")]
-        static extern void sta_removeBannerObject(string gameObjectName);
+            [DllImport("__Internal")]
+            static extern void sta_removeBannerObject(string gameObjectName);
+        #endif
     }
 }
 

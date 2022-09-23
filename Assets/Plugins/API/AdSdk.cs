@@ -30,10 +30,11 @@ namespace StartApp
                 if (sInstance == null)
                 {
                     #if UNITY_IOS
-                    sInstance = new AdSdkiOS();
+                        sInstance = new AdSdkiOS();
                     #elif UNITY_ANDROID
-                    sInstance = new AdSdkAndroid();
+                        sInstance = new AdSdkAndroid();
                     #endif
+            
                 }
                 return sInstance;
             }

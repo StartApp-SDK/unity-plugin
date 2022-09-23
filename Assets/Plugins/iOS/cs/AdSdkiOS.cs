@@ -48,37 +48,41 @@ namespace StartApp
 
         public AdSdkiOS()
         {
-            Setup();
+            #if !UNITY_EDITOR
+                Setup();
 
-            mGameObject.name = mGameObject.GetInstanceID().ToString();
-            mGameObject.AddComponent<PauseListenerComponent>().Parent = this;
+                mGameObject.name = mGameObject.GetInstanceID().ToString();
+                mGameObject.AddComponent<PauseListenerComponent>().Parent = this;
+            #endif
         }
 
         public void Setup()
         {
-            Orientation = UnityOrientation.AutoRotation;
-            UpdateOrientation();
+            #if !UNITY_EDITOR
+                Orientation = UnityOrientation.AutoRotation;
+                UpdateOrientation();
 
-            if (!string.IsNullOrEmpty(mApplicatonId))
-            {
-                return;
-            }
+                if (!string.IsNullOrEmpty(mApplicatonId))
+                {
+                    return;
+                }
 
-            sta_setUnityVersion(WrapperVersion);
+                sta_setUnityVersion(WrapperVersion);
 
-            if (!ReadDataFromTextFile())
-            {
-                throw new ArgumentException("Error in initializing Application ID or Developer ID, Verify you initialized them in StartAppDataiOS in resources");
-            }
+                if (!ReadDataFromTextFile())
+                {
+                    throw new ArgumentException("Error in initializing Application ID or Developer ID, Verify you initialized them in StartAppDataiOS in resources");
+                }
 
-            if (string.IsNullOrEmpty(mDeveloperId))
-            {
-                sta_initilize(mApplicatonId, "");
-            }
-            else
-            {
-                sta_initilize(mApplicatonId, mDeveloperId);
-            }
+                if (string.IsNullOrEmpty(mDeveloperId))
+                {
+                    sta_initilize(mApplicatonId, "");
+                }
+                else
+                {
+                    sta_initilize(mApplicatonId, mDeveloperId);
+                }
+            #endif
         }
 
         public override InterstitialAd CreateInterstitial(string tag = null)
@@ -93,34 +97,40 @@ namespace StartApp
 
         public override void SetUserConsent(string consentType, bool enabled, long timestamp)
         {
-            Setup();
-            sta_setUserConsent(enabled, consentType, timestamp);
+            #if !UNITY_EDITOR
+                Setup();
+                sta_setUserConsent(enabled, consentType, timestamp);
+            #endif
         }
 
         public override void ShowSplash(SplashConfig config = null)
         {
-            if (mSplashWasShown)
-            {
-                return;
-            }
+            #if !UNITY_EDITOR
+                if (mSplashWasShown)
+                {
+                    return;
+                }
 
-            Setup();
+                Setup();
 
-            if (config == null)
-            {
-                sta_showDefaultSplashAd();
-            }
-            else
-            {
-                sta_showSplashAd(config.AppName, config.LogoFileName, (int)config.TemplateTheme, (int)config.ScreenOrientation);
-            }
+                if (config == null)
+                {
+                    sta_showDefaultSplashAd();
+                }
+                else
+                {
+                    sta_showSplashAd(config.AppName, config.LogoFileName, (int)config.TemplateTheme, (int)config.ScreenOrientation);
+                }
 
-            mSplashWasShown = true;
+                mSplashWasShown = true;
+            #endif
         }
 
         public override void DisableReturnAds()
         {
-            sta_disableReturnAd();
+            #if !UNITY_EDITOR
+                sta_disableReturnAd();
+            #endif
         }
 
         public override bool OnBackPressed()
@@ -130,13 +140,17 @@ namespace StartApp
 		
         public override void SetTestAdsEnabled(bool enabled)
         {
-            sta_setTestAdsEnabled(enabled);
+            #if !UNITY_EDITOR
+                sta_setTestAdsEnabled(enabled);
+            #endif
         }
 
         public void UpdateOrientation()
         {
-            sta_setUnityAutoRotation((int)Orientation);
-            sta_setUnitySupportedOrientations(SupportedOrientations());
+            #if !UNITY_EDITOR
+                sta_setUnityAutoRotation((int)Orientation);
+                sta_setUnitySupportedOrientations(SupportedOrientations());
+            #endif
         }
 
         int SupportedOrientations()
@@ -220,55 +234,59 @@ namespace StartApp
 
             void OnApplicationPause(bool pauseStatus)
             {
-                if (Parent.mPaused != pauseStatus)
-                {
-                    if (pauseStatus)
+                #if !UNITY_EDITOR
+                    if (Parent.mPaused != pauseStatus)
                     {
-                        Debug.Log("Unity::EnterBackground");
-                        sta_enterBackground();
+                        if (pauseStatus)
+                        {
+                            Debug.Log("Unity::EnterBackground");
+                            sta_enterBackground();
+                        }
+                        else
+                        {
+                            Debug.Log("Unity::EnterForeground");
+                            sta_enterForeground();
+                        }
                     }
-                    else
-                    {
-                        Debug.Log("Unity::EnterForeground");
-                        sta_enterForeground();
-                    }
-                }
-                Parent.mPaused = pauseStatus;
+                    Parent.mPaused = pauseStatus;
+                #endif
             }
         }
 
-        [DllImport("__Internal")]
-        static extern void sta_initilize(string appId, string devId);
+        #if !UNITY_EDITOR
+            [DllImport("__Internal")]
+            static extern void sta_initilize(string appId, string devId);
 
-        [DllImport("__Internal")]
-        static extern void sta_setUserConsent(bool consent, string consentType, long timestamp);
+            [DllImport("__Internal")]
+            static extern void sta_setUserConsent(bool consent, string consentType, long timestamp);
 		
-        [DllImport("__Internal")]
-        static extern void sta_setTestAdsEnabled(bool enabled);
+            [DllImport("__Internal")]
+            static extern void sta_setTestAdsEnabled(bool enabled);
 
-        [DllImport("__Internal")]
-        static extern void sta_disableReturnAd();
+            [DllImport("__Internal")]
+            static extern void sta_disableReturnAd();
 
-        [DllImport("__Internal")]
-        static extern void sta_enterBackground();
+            [DllImport("__Internal")]
+            static extern void sta_enterBackground();
 
-        [DllImport("__Internal")]
-        static extern void sta_enterForeground();
+            [DllImport("__Internal")]
+            static extern void sta_enterForeground();
 
-        [DllImport("__Internal")]
-        static extern void sta_setUnityVersion(string unityVersion);
+            [DllImport("__Internal")]
+            static extern void sta_setUnityVersion(string unityVersion);
 
-        [DllImport("__Internal")]
-        static extern void sta_setUnitySupportedOrientations(int supportedOrientations);
+            [DllImport("__Internal")]
+            static extern void sta_setUnitySupportedOrientations(int supportedOrientations);
 
-        [DllImport("__Internal")]
-        static extern void sta_setUnityAutoRotation(int autoRotation);
+            [DllImport("__Internal")]
+            static extern void sta_setUnityAutoRotation(int autoRotation);
 
-        [DllImport("__Internal")]
-        static extern void sta_showDefaultSplashAd();
+            [DllImport("__Internal")]
+            static extern void sta_showDefaultSplashAd();
 
-        [DllImport("__Internal")]
-        static extern void sta_showSplashAd(string appName, string logoImageName, int theme, int orientation);
+            [DllImport("__Internal")]
+            static extern void sta_showSplashAd(string appName, string logoImageName, int theme, int orientation);
+        #endif
     }
 }
 

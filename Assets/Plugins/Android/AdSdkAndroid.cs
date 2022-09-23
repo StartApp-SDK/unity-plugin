@@ -31,7 +31,9 @@ namespace StartApp
             }
         }
 
+    #if !UNITY_EDITOR
         static readonly string EXIT_AD_TAG = "exit_ad";
+    #endif
 
         string mAccountId;
         string mApplicationId;
@@ -39,7 +41,9 @@ namespace StartApp
         bool mIsAccountIdUsed;
         bool mWasSplashShown;
 
+    #if !UNITY_EDITOR
         public AndroidJavaObject Activity { get; private set; }
+    #endif
 
         public void Setup()
         {
@@ -70,33 +74,35 @@ namespace StartApp
 
         void Setup(string accId, string appId, bool returnAds)
         {
-            var unityClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-            Activity = unityClass.GetStatic<AndroidJavaObject>("currentActivity");
+            #if !UNITY_EDITOR
+                var unityClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+                Activity = unityClass.GetStatic<AndroidJavaObject>("currentActivity");
 
-            var jAppId = new AndroidJavaObject("java.lang.String", appId);
-            var sdk = new AndroidJavaClass("com.startapp.sdk.adsbase.StartAppSDK");
+                var jAppId = new AndroidJavaObject("java.lang.String", appId);
+                var sdk = new AndroidJavaClass("com.startapp.sdk.adsbase.StartAppSDK");
 
-            var wrapperName = new AndroidJavaObject("java.lang.String", "Unity");
-            var wrapperVer = new AndroidJavaObject("java.lang.String", WrapperVersion);
-            sdk.CallStatic("addWrapper", Activity, wrapperName, wrapperVer);
+                var wrapperName = new AndroidJavaObject("java.lang.String", "Unity");
+                var wrapperVer = new AndroidJavaObject("java.lang.String", WrapperVersion);
+                sdk.CallStatic("addWrapper", Activity, wrapperName, wrapperVer);
 
-            var ad = new AndroidJavaClass("com.startapp.sdk.adsbase.StartAppAd");
-            ad.CallStatic("disableSplash");
+                var ad = new AndroidJavaClass("com.startapp.sdk.adsbase.StartAppAd");
+                ad.CallStatic("disableSplash");
 
-            if (string.IsNullOrEmpty(accId))
-            {
-                Debug.Log("App ID: " + appId);
-                Debug.Log("Enable Return Ads : " + mEnableReturnAds);
-                sdk.CallStatic("init", Activity, jAppId, returnAds);
-            }
-            else
-            {
-                Debug.Log("Account ID: " + accId);
-                Debug.Log("App ID: " + appId);
-                Debug.Log("Enable Return Ads : " + mEnableReturnAds);
-                AndroidJavaObject jAccId = new AndroidJavaObject("java.lang.String", accId);
-                sdk.CallStatic("init", Activity, jAccId, jAppId, returnAds);
-            }
+                if (string.IsNullOrEmpty(accId))
+                {
+                    Debug.Log("App ID: " + appId);
+                    Debug.Log("Enable Return Ads : " + mEnableReturnAds);
+                    sdk.CallStatic("init", Activity, jAppId, returnAds);
+                }
+                else
+                {
+                    Debug.Log("Account ID: " + accId);
+                    Debug.Log("App ID: " + appId);
+                    Debug.Log("Enable Return Ads : " + mEnableReturnAds);
+                    AndroidJavaObject jAccId = new AndroidJavaObject("java.lang.String", accId);
+                    sdk.CallStatic("init", Activity, jAccId, jAppId, returnAds);
+                }
+            #endif
         }
 
         public override InterstitialAd CreateInterstitial(string tag = null)
@@ -111,88 +117,100 @@ namespace StartApp
 
         public override void DisableReturnAds()
         {
-            Setup();
-            mEnableReturnAds = false;
+            #if !UNITY_EDITOR
+                Setup();
+                mEnableReturnAds = false;
+            #endif
         }
 		
         public override void SetTestAdsEnabled(bool enabled)
         {
-            Setup();
-            var sdk = new AndroidJavaClass("com.startapp.sdk.adsbase.StartAppSDK");
-            sdk.CallStatic("setTestAdsEnabled", enabled);
+            #if !UNITY_EDITOR
+                Setup();
+                var sdk = new AndroidJavaClass("com.startapp.sdk.adsbase.StartAppSDK");
+                sdk.CallStatic("setTestAdsEnabled", enabled);
+            #endif
         }
 
         public override void SetUserConsent(string consentType, bool enabled, long timestamp)
         {
-            Setup();
-            AndroidJavaObject objConsentType = new AndroidJavaObject("java.lang.String", consentType);
-            var sdk = new AndroidJavaClass("com.startapp.sdk.adsbase.StartAppSDK");
-            sdk.CallStatic("setUserConsent", Activity, objConsentType, timestamp, enabled);
+            #if !UNITY_EDITOR
+                Setup();
+                AndroidJavaObject objConsentType = new AndroidJavaObject("java.lang.String", consentType);
+                var sdk = new AndroidJavaClass("com.startapp.sdk.adsbase.StartAppSDK");
+                sdk.CallStatic("setUserConsent", Activity, objConsentType, timestamp, enabled);
+            #endif
         }
 
         public override void ShowSplash(SplashConfig config)
         {
-            if (mWasSplashShown)
-            {
-                return;
-            }
-
-            Setup();
-
-            var jad = new AndroidJavaClass("com.startapp.sdk.adsbase.StartAppAd");
-            if (config == null)
-            {
-                jad.CallStatic("showSplash", Activity, null);
-                mWasSplashShown = true;
-                return;
-            }
-
-            var jconfig = new AndroidJavaObject("com.startapp.sdk.ads.splash.SplashConfig");
-
-            if (config.AppName != null)
-            {
-                var jappName = new AndroidJavaObject("java.lang.String", config.AppName);
-                jconfig.Call<AndroidJavaObject>("setAppName", jappName);
-            }
-
-            if (config.LogoFileName != null)
-            {
-                byte[] logoByteArray = null;
-                var logoTexture = Resources.Load(config.LogoFileName) as Texture2D;
-                if (logoTexture != null)
+            #if !UNITY_EDITOR
+                if (mWasSplashShown)
                 {
-                    logoByteArray = logoTexture.EncodeToPNG();
+                    return;
                 }
-                jconfig.Call<AndroidJavaObject>("setLogo", logoByteArray);
-            }
 
-            int themeIndex = (int)config.TemplateTheme + 1; // +1 for Android because the theme enum starts from 1
-            var themeClass = new AndroidJavaClass("com.startapp.sdk.ads.splash.SplashConfig$Theme");
-            jconfig.Call<AndroidJavaObject>("setTheme", themeClass.CallStatic<AndroidJavaObject>("getByIndex", themeIndex));
+                Setup();
 
-            int orientationIndex = (int)config.ScreenOrientation + 1; // +1 for Android because the orientation enum starts from 1
-            var orientationClass = new AndroidJavaClass("com.startapp.sdk.ads.splash.SplashConfig$Orientation");
-            jconfig.Call<AndroidJavaObject>("setOrientation", orientationClass.CallStatic<AndroidJavaObject>("getByIndex", orientationIndex));
+                var jad = new AndroidJavaClass("com.startapp.sdk.adsbase.StartAppAd");
+                if (config == null)
+                {
+                    jad.CallStatic("showSplash", Activity, null);
+                    mWasSplashShown = true;
+                    return;
+                }
 
-            jad.CallStatic("showSplash", Activity, null, jconfig);
-            mWasSplashShown = true;
+                var jconfig = new AndroidJavaObject("com.startapp.sdk.ads.splash.SplashConfig");
+
+                if (config.AppName != null)
+                {
+                    var jappName = new AndroidJavaObject("java.lang.String", config.AppName);
+                    jconfig.Call<AndroidJavaObject>("setAppName", jappName);
+                }
+
+                if (config.LogoFileName != null)
+                {
+                    byte[] logoByteArray = null;
+                    var logoTexture = Resources.Load(config.LogoFileName) as Texture2D;
+                    if (logoTexture != null)
+                    {
+                        logoByteArray = logoTexture.EncodeToPNG();
+                    }
+                    jconfig.Call<AndroidJavaObject>("setLogo", logoByteArray);
+                }
+
+                int themeIndex = (int)config.TemplateTheme + 1; // +1 for Android because the theme enum starts from 1
+                var themeClass = new AndroidJavaClass("com.startapp.sdk.ads.splash.SplashConfig$Theme");
+                jconfig.Call<AndroidJavaObject>("setTheme", themeClass.CallStatic<AndroidJavaObject>("getByIndex", themeIndex));
+
+                int orientationIndex = (int)config.ScreenOrientation + 1; // +1 for Android because the orientation enum starts from 1
+                var orientationClass = new AndroidJavaClass("com.startapp.sdk.ads.splash.SplashConfig$Orientation");
+                jconfig.Call<AndroidJavaObject>("setOrientation", orientationClass.CallStatic<AndroidJavaObject>("getByIndex", orientationIndex));
+
+                jad.CallStatic("showSplash", Activity, null, jconfig);
+                mWasSplashShown = true;
+            #endif
         }
 
         public override bool OnBackPressed()
         {
-            var backAd = new InterstitialAdAndroid(EXIT_AD_TAG);
-            bool clicked = false;
+            #if !UNITY_EDITOR
+                var backAd = new InterstitialAdAndroid(EXIT_AD_TAG);
+                bool clicked = false;
 
-            backAd.RaiseAdClosed += (sender, e) => {
-                if (!clicked)
-                {
-                    Application.Quit();
-                }
-            };
+                backAd.RaiseAdClosed += (sender, e) => {
+                    if (!clicked)
+                    {
+                        Application.Quit();
+                    }
+                };
 
-            backAd.RaiseAdClicked += (sender, e) => clicked = true;
+                backAd.RaiseAdClicked += (sender, e) => clicked = true;
 
-            return backAd.ShowAd();
+                return backAd.ShowAd();
+            #else
+                return false;
+            #endif
         }
 
         bool ReadDataFromTextFile()

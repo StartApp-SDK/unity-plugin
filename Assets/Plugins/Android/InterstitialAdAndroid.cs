@@ -22,42 +22,60 @@ namespace StartApp
 {
     public class InterstitialAdAndroid : InterstitialAd
     {
-        readonly AndroidJavaObject mjStartAppAd;
+        #if !UNITY_EDITOR
+            readonly AndroidJavaObject mjStartAppAd;
+        #endif
+
         readonly string mAdTag;
 
         static InterstitialAdAndroid()
         {
-            AdSdkAndroid.ImplInstance.Setup();
+            #if !UNITY_EDITOR
+                AdSdkAndroid.ImplInstance.Setup();
+            #endif
         }
 
         public InterstitialAdAndroid(string tag = null)
         {
-            mjStartAppAd = new AndroidJavaObject("com.startapp.sdk.adsbase.StartAppAd", AdSdkAndroid.ImplInstance.Activity);
-            mjStartAppAd.Call("setVideoListener", new ImplementationVideoListener(this));
-            mAdTag = tag;
+            #if !UNITY_EDITOR
+                mjStartAppAd = new AndroidJavaObject("com.startapp.sdk.adsbase.StartAppAd", AdSdkAndroid.ImplInstance.Activity);
+                mjStartAppAd.Call("setVideoListener", new ImplementationVideoListener(this));
+                mAdTag = tag;
+            #endif
         }
 
         public override void LoadAd(AdType mode)
         {
-            var adprefs = new AndroidJavaObject("com.startapp.sdk.adsbase.model.AdPreferences");
-            if (mAdTag != null)
-            {
-                adprefs.Call<AndroidJavaObject>("setAdTag", mAdTag);
-            }
+            #if !UNITY_EDITOR
+                var adprefs = new AndroidJavaObject("com.startapp.sdk.adsbase.model.AdPreferences");
+                if (mAdTag != null)
+                {
+                    adprefs.Call<AndroidJavaObject>("setAdTag", mAdTag);
+                }
 
-            mjStartAppAd.Call("loadAd", GetJAdType(mode), adprefs, new ImplementationAdEventListener(this));
+                mjStartAppAd.Call("loadAd", GetJAdType(mode), adprefs, new ImplementationAdEventListener(this));
+            #endif
         }
 
         public override bool ShowAd()
         {
-            return mjStartAppAd.Call<bool>("showAd", new ImplementationAdDisplayListener(this));
+            #if !UNITY_EDITOR
+                return mjStartAppAd.Call<bool>("showAd", new ImplementationAdDisplayListener(this));
+            #else
+                return false;
+            #endif
         }
 
         public override bool IsReady()
         {
-            return mjStartAppAd.Call<bool>("isReady");
+            #if !UNITY_EDITOR
+                return mjStartAppAd.Call<bool>("isReady");
+            #else
+                return false;
+            #endif
         }
 
+    #if !UNITY_EDITOR
         class ImplementationAdEventListener : AndroidJavaProxy
         {
             readonly InterstitialAdAndroid mParent;
@@ -133,6 +151,7 @@ namespace StartApp
 
             return jModeClass.GetStatic<AndroidJavaObject>("AUTOMATIC");
         }
+    #endif
     }
 }
 

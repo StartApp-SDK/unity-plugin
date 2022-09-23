@@ -23,35 +23,41 @@ namespace StartApp
 {
     public class BannerAdAndroid : BannerAd, IDisposable
     {
+        static readonly int ALIGN_PARENT_BOTTOM;
+        static readonly int ALIGN_PARENT_TOP;
+        
+    #if !UNITY_EDITOR
         static readonly int ID_LAYOUT = 11;
         static readonly int ID_UNITY = 12;
         static readonly int MATCH_PARENT;
         static readonly int WRAP_CONTENT;
         static readonly int CENTER_HORIZONTAL;
-        static readonly int ALIGN_PARENT_BOTTOM;
-        static readonly int ALIGN_PARENT_TOP;
         static readonly int VISIBLE;
 
         AndroidJavaObject mBanner;
+    #endif
+
         BannerPosition mCurrentPosition;
         string mAdTag;
         bool mDisposed;
 
         static BannerAdAndroid()
         {
-            AdSdkAndroid.ImplInstance.Setup();
+            #if !UNITY_EDITOR
+                AdSdkAndroid.ImplInstance.Setup();
 
-            var viewParams = new AndroidJavaClass("android.view.ViewGroup$LayoutParams");
-            MATCH_PARENT = viewParams.GetStatic<int>("MATCH_PARENT");
-            WRAP_CONTENT = viewParams.GetStatic<int>("WRAP_CONTENT");
+                var viewParams = new AndroidJavaClass("android.view.ViewGroup$LayoutParams");
+                MATCH_PARENT = viewParams.GetStatic<int>("MATCH_PARENT");
+                WRAP_CONTENT = viewParams.GetStatic<int>("WRAP_CONTENT");
 
-            var relativeLayout = new AndroidJavaClass("android.widget.RelativeLayout");
-            CENTER_HORIZONTAL = relativeLayout.GetStatic<int>("CENTER_HORIZONTAL");
-            ALIGN_PARENT_BOTTOM = relativeLayout.GetStatic<int>("ALIGN_PARENT_BOTTOM");
-            ALIGN_PARENT_TOP = relativeLayout.GetStatic<int>("ALIGN_PARENT_TOP");
+                var relativeLayout = new AndroidJavaClass("android.widget.RelativeLayout");
+                CENTER_HORIZONTAL = relativeLayout.GetStatic<int>("CENTER_HORIZONTAL");
+                ALIGN_PARENT_BOTTOM = relativeLayout.GetStatic<int>("ALIGN_PARENT_BOTTOM");
+                ALIGN_PARENT_TOP = relativeLayout.GetStatic<int>("ALIGN_PARENT_TOP");
 
-            var viewClass = new AndroidJavaClass("android.view.View");
-            VISIBLE = viewClass.GetStatic<int>("VISIBLE");
+                var viewClass = new AndroidJavaClass("android.view.View");
+                VISIBLE = viewClass.GetStatic<int>("VISIBLE");
+            #endif
         }
 
         public BannerAdAndroid(string tag = null)
@@ -74,7 +80,11 @@ namespace StartApp
             {
                 // Free any other managed objects here.
             }
+
+        #if !UNITY_EDITOR
             AdSdkAndroid.ImplInstance.Activity.Call("runOnUiThread", new AndroidJavaRunnable(RemoveBannerImplementation));
+        #endif
+
             mDisposed = true;
         }
 
@@ -85,70 +95,74 @@ namespace StartApp
 
         public override void ShowInPosition(BannerPosition position, BannerType type)
         {
-            var jContent = new AndroidJavaObject("java.lang.String", "content");
-            var jId = new AndroidJavaObject("java.lang.String", "id");
-            var jPackage = new AndroidJavaObject("java.lang.String", "android");
+            #if !UNITY_EDITOR
+                var jContent = new AndroidJavaObject("java.lang.String", "content");
+                var jId = new AndroidJavaObject("java.lang.String", "id");
+                var jPackage = new AndroidJavaObject("java.lang.String", "android");
 
-            AdSdkAndroid.ImplInstance.Activity.Call("runOnUiThread", new AndroidJavaRunnable(() =>
-            {
-                var layout = AdSdkAndroid.ImplInstance.Activity.Call<AndroidJavaObject>("findViewById", ID_LAYOUT);
-
-                if (layout == null)
+                AdSdkAndroid.ImplInstance.Activity.Call("runOnUiThread", new AndroidJavaRunnable(() =>
                 {
-                    var res = AdSdkAndroid.ImplInstance.Activity.Call<AndroidJavaObject>("getResources");
-                    var id = res.Call<int>("getIdentifier", jContent, jId, jPackage);
-                    var contentParent = AdSdkAndroid.ImplInstance.Activity.Call<AndroidJavaObject>("findViewById", id);
-                    var unityView = contentParent.Call<AndroidJavaObject>("getChildAt", 0);
-                    unityView.Call("setId", ID_UNITY);
-                    contentParent.Call("removeView", unityView);
+                    var layout = AdSdkAndroid.ImplInstance.Activity.Call<AndroidJavaObject>("findViewById", ID_LAYOUT);
 
-                    layout = new AndroidJavaObject("android.widget.RelativeLayout", AdSdkAndroid.ImplInstance.Activity);
-                    layout.Call("setId", ID_LAYOUT);
-                    contentParent.Call("addView", layout);
-
-                    var layoutParams = new AndroidJavaObject("android.widget.RelativeLayout$LayoutParams", MATCH_PARENT, MATCH_PARENT);
-                    layout.Call("addView", unityView, layoutParams);
-                }
-
-                var bannerParams = new AndroidJavaObject("android.widget.RelativeLayout$LayoutParams", WRAP_CONTENT, WRAP_CONTENT);
-                bannerParams.Call("addRule", CENTER_HORIZONTAL);
-                bannerParams.Call("addRule", GetRuleFromBannerPosition(position));
-
-                if (mBanner == null)
-                {
-                    string jClass = type == BannerAd.BannerType.Mrec
-                        ? "com.startapp.sdk.ads.banner.Mrec"
-                        : type == BannerAd.BannerType.Cover
-                            ? "com.startapp.sdk.ads.banner.Cover"
-                            : "com.startapp.sdk.ads.banner.bannerstandard.BannerStandard";
-
-                    var adprefs = new AndroidJavaObject("com.startapp.sdk.adsbase.model.AdPreferences");
-                    if (mAdTag != null)
+                    if (layout == null)
                     {
-                        adprefs.Call<AndroidJavaObject>("setAdTag", mAdTag);
+                        var res = AdSdkAndroid.ImplInstance.Activity.Call<AndroidJavaObject>("getResources");
+                        var id = res.Call<int>("getIdentifier", jContent, jId, jPackage);
+                        var contentParent = AdSdkAndroid.ImplInstance.Activity.Call<AndroidJavaObject>("findViewById", id);
+                        var unityView = contentParent.Call<AndroidJavaObject>("getChildAt", 0);
+                        unityView.Call("setId", ID_UNITY);
+                        contentParent.Call("removeView", unityView);
+
+                        layout = new AndroidJavaObject("android.widget.RelativeLayout", AdSdkAndroid.ImplInstance.Activity);
+                        layout.Call("setId", ID_LAYOUT);
+                        contentParent.Call("addView", layout);
+
+                        var layoutParams = new AndroidJavaObject("android.widget.RelativeLayout$LayoutParams", MATCH_PARENT, MATCH_PARENT);
+                        layout.Call("addView", unityView, layoutParams);
                     }
 
-                    mBanner = new AndroidJavaObject(jClass, AdSdkAndroid.ImplInstance.Activity, adprefs);
-                    mBanner.Call("setBannerListener", new ImplementationBannerListener(this));
+                    var bannerParams = new AndroidJavaObject("android.widget.RelativeLayout$LayoutParams", WRAP_CONTENT, WRAP_CONTENT);
+                    bannerParams.Call("addRule", CENTER_HORIZONTAL);
+                    bannerParams.Call("addRule", GetRuleFromBannerPosition(position));
 
-                    layout.Call("addView", mBanner, bannerParams);
-                }
-                else
-                {
-                    mBanner.Call("setLayoutParams", bannerParams);
-                    mBanner.Call("showBanner");
-                }
+                    if (mBanner == null)
+                    {
+                        string jClass = type == BannerAd.BannerType.Mrec
+                            ? "com.startapp.sdk.ads.banner.Mrec"
+                            : type == BannerAd.BannerType.Cover
+                                ? "com.startapp.sdk.ads.banner.Cover"
+                                : "com.startapp.sdk.ads.banner.bannerstandard.BannerStandard";
 
-                mCurrentPosition = position;
-            }));
+                        var adprefs = new AndroidJavaObject("com.startapp.sdk.adsbase.model.AdPreferences");
+                        if (mAdTag != null)
+                        {
+                            adprefs.Call<AndroidJavaObject>("setAdTag", mAdTag);
+                        }
+
+                        mBanner = new AndroidJavaObject(jClass, AdSdkAndroid.ImplInstance.Activity, adprefs);
+                        mBanner.Call("setBannerListener", new ImplementationBannerListener(this));
+
+                        layout.Call("addView", mBanner, bannerParams);
+                    }
+                    else
+                    {
+                        mBanner.Call("setLayoutParams", bannerParams);
+                        mBanner.Call("showBanner");
+                    }
+
+                    mCurrentPosition = position;
+                }));
+            #endif
         }
 
         public override void Hide()
         {
-            AdSdkAndroid.ImplInstance.Activity.Call("runOnUiThread", new AndroidJavaRunnable(() =>
-            {
-                mBanner.Call("hideBanner");
-            }));
+            #if !UNITY_EDITOR
+                AdSdkAndroid.ImplInstance.Activity.Call("runOnUiThread", new AndroidJavaRunnable(() =>
+                {
+                    mBanner.Call("hideBanner");
+                }));
+            #endif
         }
 
         public override bool IsShownInPosition(BannerPosition position)
@@ -158,23 +172,29 @@ namespace StartApp
 
         bool IsVisible()
         {
-            return mBanner != null && mBanner.Call<int>("getVisibility") == VISIBLE;
+            #if !UNITY_EDITOR
+                return mBanner != null && mBanner.Call<int>("getVisibility") == VISIBLE;
+            #else
+                return false;
+            #endif
         }
 
         public void RemoveBannerImplementation()
         {
-            if (mBanner == null)
-            {
-                return;
-            }
+            #if !UNITY_EDITOR
+                if (mBanner == null)
+                {
+                    return;
+                }
 
-            var layout = AdSdkAndroid.ImplInstance.Activity.Call<AndroidJavaObject>("findViewById", ID_LAYOUT);
+                var layout = AdSdkAndroid.ImplInstance.Activity.Call<AndroidJavaObject>("findViewById", ID_LAYOUT);
 
-            if (layout != null)
-            {
-                layout.Call("removeView", mBanner);
-                mBanner = null;
-            }
+                if (layout != null)
+                {
+                    layout.Call("removeView", mBanner);
+                    mBanner = null;
+                }
+            #endif
         }
 
         static int GetRuleFromBannerPosition(BannerPosition position)
@@ -182,6 +202,7 @@ namespace StartApp
             return position == BannerPosition.Top ? ALIGN_PARENT_TOP : ALIGN_PARENT_BOTTOM;
         }
 
+    #if !UNITY_EDITOR
         class ImplementationBannerListener : AndroidJavaProxy
         {
             readonly BannerAdAndroid mParent;
@@ -211,6 +232,7 @@ namespace StartApp
             {
             }
         }
+    #endif
     }
 }
 

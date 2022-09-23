@@ -30,14 +30,18 @@ namespace StartApp
 
         static InterstitialAdiOS()
         {
-            AdSdkiOS.ImplInstance.Setup();
+            #if !UNITY_EDITOR
+                AdSdkiOS.ImplInstance.Setup();
+            #endif
         }
 
         public InterstitialAdiOS(string tag = null)
         {
-            mAdTag = tag;
-            mGameObject.name = mGameObject.GetInstanceID().ToString();
-            mGameObject.AddComponent<ListenerComponent>().Parent = this;
+            #if !UNITY_EDITOR
+                mAdTag = tag;
+                mGameObject.name = mGameObject.GetInstanceID().ToString();
+                mGameObject.AddComponent<ListenerComponent>().Parent = this;
+            #endif
         }
 
         public void Dispose()
@@ -55,7 +59,11 @@ namespace StartApp
             {
                 // Free any other managed objects here.
             }
-            sta_removeAdObject(mGameObject.name);
+
+            #if !UNITY_EDITOR
+                sta_removeAdObject(mGameObject.name);
+            #endif
+
             mDisposed = true;
         }
 
@@ -66,29 +74,39 @@ namespace StartApp
 
         public override void LoadAd(AdType mode)
         {
-            if (mode == AdType.Rewarded)
-            {
-                sta_loadRewardedVideoAd(mGameObject.name, mAdTag);
-            }
-            else if (mode == AdType.Video)
-            {
-                sta_loadVideoAd(mGameObject.name, mAdTag);
-            }
-            else
-            {
-                sta_loadAd(mGameObject.name, mAdTag);
-            }
+            #if !UNITY_EDITOR
+                if (mode == AdType.Rewarded)
+                {
+                    sta_loadRewardedVideoAd(mGameObject.name, mAdTag);
+                }
+                else if (mode == AdType.Video)
+                {
+                    sta_loadVideoAd(mGameObject.name, mAdTag);
+                }
+                else
+                {
+                    sta_loadAd(mGameObject.name, mAdTag);
+                }
+            #endif
         }
 
         public override bool ShowAd()
         {
-            sta_showAd(mGameObject.name);
-            return true;
+            #if !UNITY_EDITOR
+                sta_showAd(mGameObject.name);
+                return true;
+            #else
+                return false;
+            #endif
         }
 
         public override bool IsReady()
         {
-            return sta_isReady(mGameObject.name);
+            #if !UNITY_EDITOR
+                return sta_isReady(mGameObject.name);
+            #else
+                return false;
+            #endif
         }
 
         class ListenerComponent : MonoBehaviour
@@ -131,23 +149,25 @@ namespace StartApp
             }
         }
 
-        [DllImport("__Internal")]
-        static extern void sta_loadAd(string gameObjectName, string tag);
+        #if !UNITY_EDITOR
+            [DllImport("__Internal")]
+            static extern void sta_loadAd(string gameObjectName, string tag);
 
-        [DllImport("__Internal")]
-        static extern void sta_showAd(string gameObjectName);
+            [DllImport("__Internal")]
+            static extern void sta_showAd(string gameObjectName);
 
-        [DllImport("__Internal")]
-        static extern void sta_loadRewardedVideoAd(string gameObjectName, string tag);
+            [DllImport("__Internal")]
+            static extern void sta_loadRewardedVideoAd(string gameObjectName, string tag);
 
-        [DllImport("__Internal")]
-        static extern void sta_loadVideoAd(string gameObjectName, string tag);
+            [DllImport("__Internal")]
+            static extern void sta_loadVideoAd(string gameObjectName, string tag);
 
-        [DllImport("__Internal")]
-        static extern bool sta_isReady(string gameObjectName);
+            [DllImport("__Internal")]
+            static extern bool sta_isReady(string gameObjectName);
 
-        [DllImport("__Internal")]
-        static extern void sta_removeAdObject(string gameObjectName);
+            [DllImport("__Internal")]
+            static extern void sta_removeAdObject(string gameObjectName);
+        #endif
     }
 }
 
