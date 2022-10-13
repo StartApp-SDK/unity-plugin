@@ -17,7 +17,7 @@
 
 
 #import "STAUnityBanneriOS.h"
-#import "STABannerSize.h"
+#import <StartApp/STABannerSize.h>
 
 static NSMutableDictionary<NSString*, STAUnityBanneriOS*>* _sAds;
 

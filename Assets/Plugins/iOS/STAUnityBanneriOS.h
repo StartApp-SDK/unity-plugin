@@ -16,7 +16,7 @@
 
 
 #import <Foundation/Foundation.h>
-#import "STABannerView.h"
+#import <StartApp/STABannerView.h>
 
 @interface STAUnityBanneriOS : NSObject <STABannerDelegateProtocol>
 @end

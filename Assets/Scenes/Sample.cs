@@ -24,7 +24,8 @@ public class Sample : MonoBehaviour {
     void Start() {
         AdSdk.Instance.DisableReturnAds();
         AdSdk.Instance.SetTestAdsEnabled(true);
-        var config = new SplashConfig {
+        var config = new SplashConfig
+        {
             TemplateTheme = SplashConfig.Theme.Blaze
         };
         AdSdk.Instance.ShowSplash(config);
@@ -36,9 +37,11 @@ public class Sample : MonoBehaviour {
         // AdSdk.Instance.ShowDefaultAd();
 
         ad = AdSdk.Instance.CreateInterstitial("myTagForFullscreen");
-        ad.RaiseAdLoaded += (sender, e) => {
+        ad.RaiseAdLoaded += (sender, e) =>
+        {
             Debug.Log("Unity::RaiseAdLoaded");
-            if (ad.IsReady()) {
+            if (ad.IsReady())
+            {
                 ad.ShowAd();
             }
         };
@@ -52,15 +55,15 @@ public class Sample : MonoBehaviour {
         InvokeRepeating("LoadInterstitial", 10.0f, 0.0f);
 
         var banner = AdSdk.Instance.CreateBanner("myTagForBanner");
-        banner.ShowInPosition(BannerAd.BannerPosition.Top, BannerAd.BannerType.Mrec);
+        banner.ShowInPosition(BannerAd.BannerPosition.Top, BannerAd.BannerType.Regular);
 
         banner.RaiseBannerShown += (sender, e) => Debug.Log("Unity::RaiseBannerShown");
         banner.RaiseBannerImpressionSent += (sende, e) => Debug.Log("Unity::RaiseBannerImpressionSent");
         banner.RaiseBannerLoadingFailed += (sender, e) => Debug.Log(string.Format("Unity::RaiseBannerLoadingFailed {0}", e.Message));
         banner.RaiseBannerClicked += (sender, e) => Debug.Log("Unity::RaiseBannerClicked");
-        banner.Hide();
 
-        if (!banner.IsShownInPosition(BannerAd.BannerPosition.Top)) {
+        if (!banner.IsShownInPosition(BannerAd.BannerPosition.Top))
+        {
             // AdSdk.Instance.ShowDefaultBanner(BannerAd.BannerPosition.Bottom, "myBottomBanner");
             AdSdk.Instance.ShowDefaultBanner();
             banner.ShowInPosition(BannerAd.BannerPosition.Top);

@@ -16,7 +16,7 @@
 
 
 #import "STAUnityAdSdkiOS.h"
-#import "STAStartAppSDK.h"
+#import <StartApp/STAStartAppSDK.h>
 
 
 @implementation STAUnityAdSdkiOS

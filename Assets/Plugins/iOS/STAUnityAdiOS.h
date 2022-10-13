@@ -16,7 +16,7 @@
 
 
 #import <Foundation/Foundation.h>
-#import "STAStartAppAd.h"
+#import <StartApp/STAStartAppAd.h>
 
 @interface STAUnityAdiOS : NSObject <STADelegateProtocol>
 @end
