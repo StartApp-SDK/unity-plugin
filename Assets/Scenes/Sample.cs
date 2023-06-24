@@ -28,7 +28,7 @@ public class Sample : MonoBehaviour {
         {
             TemplateTheme = SplashConfig.Theme.Blaze
         };
-        AdSdk.Instance.ShowSplash(config);
+        //AdSdk.Instance.ShowSplash(config);
         AdSdk.Instance.SetUserConsent(
             "pas",
             true,
