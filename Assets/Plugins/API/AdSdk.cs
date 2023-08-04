@@ -20,7 +20,7 @@ namespace StartApp
 {
     public abstract class AdSdk
     {
-        public static string WrapperVersion = "3.1.2";
+        public static string WrapperVersion = "3.1.3";
 
         private static AdSdk sInstance;
         public static AdSdk Instance
