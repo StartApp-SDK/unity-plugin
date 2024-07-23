@@ -2,8 +2,10 @@ using System.IO;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.Callbacks;
-using UnityEditor.iOS.Xcode;
 using UnityEngine.Assertions;
+
+#if UNITY_IOS
+using UnityEditor.iOS.Xcode;
 
 public class BuildPostProcessor
 {
@@ -55,3 +57,4 @@ public class BuildPostProcessor
             CopyAndReplaceDirectory(dir, Path.Combine(destPath, Path.GetFileName(dir)), ignoreMetaFiles);
     }
 }
+#endif
