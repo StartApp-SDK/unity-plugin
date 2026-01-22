@@ -19,11 +19,6 @@ public class BuildPostProcessor
     {
         if (target == BuildTarget.iOS)
         {
-            string sourcePath = Path.Combine(FRAMEWORK_ORIGIN_PATH, START_IO_FRAMEWORK_NAME);
-            string destPath = Path.Combine(FRAMEWORK_TARGET_PATH, START_IO_FRAMEWORK_NAME);
-
-            CopyAndReplaceDirectory(sourcePath, Path.Combine(path, destPath), true);
-
             PBXProject project = new PBXProject();
             string sPath = PBXProject.GetPBXProjectPath(path);
             project.ReadFromFile(sPath);
@@ -31,9 +26,17 @@ public class BuildPostProcessor
             string targetGuid = project.GetUnityFrameworkTargetGuid();
             project.AddBuildProperty(targetGuid, "OTHER_LDFLAGS", "-ObjC");
 
-            string startioXCFrameworkGuid = project.AddFile(destPath, destPath);
-            var frameworkLinkPhaseGuid = project.GetFrameworksBuildPhaseByTarget(targetGuid);
-            project.AddFileToBuildSection(targetGuid, frameworkLinkPhaseGuid, startioXCFrameworkGuid);
+            //Code below copies StartApp.xcframework to build folder and adds it to Link Frameworks phase.
+            //Uncomment code below in case your unity editor doesn't support xcframeworks handling
+            
+            // string sourcePath = Path.Combine(FRAMEWORK_ORIGIN_PATH, START_IO_FRAMEWORK_NAME);
+            // string destPath = Path.Combine(FRAMEWORK_TARGET_PATH, START_IO_FRAMEWORK_NAME);
+
+            // CopyAndReplaceDirectory(sourcePath, Path.Combine(path, destPath), true);
+
+            // string startioXCFrameworkGuid = project.AddFile(destPath, destPath);
+            // var frameworkLinkPhaseGuid = project.GetFrameworksBuildPhaseByTarget(targetGuid);
+            // project.AddFileToBuildSection(targetGuid, frameworkLinkPhaseGuid, startioXCFrameworkGuid);
 
             File.WriteAllText(sPath, project.WriteToString());
         }

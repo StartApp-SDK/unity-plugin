@@ -31,6 +31,34 @@ static NSMutableDictionary<NSString*, STAUnityBanneriOS*>* _sAds;
 
 @implementation STAUnityBanneriOS
 
++ (UIWindow *)sta_keyWindow {
+    UIWindow *keyWindow = nil;
+    if (@available(iOS 13.0, *)) {
+        for (UIScene *scene in [UIApplication sharedApplication].connectedScenes) {
+            if (scene.activationState == UISceneActivationStateForegroundActive && [scene isKindOfClass:[UIWindowScene class]]) {
+                UIWindowScene *windowScene = (UIWindowScene *)scene;
+                for (UIWindow *window in windowScene.windows) {
+                    if (window.isKeyWindow) {
+                        keyWindow = window;
+                        break;
+                    }
+                }
+                if (keyWindow) {
+                    break;
+                }
+            }
+        }
+    } else {
+#if !TARGET_OS_TV
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        keyWindow = [[UIApplication sharedApplication].windows firstObject];
+#pragma clang diagnostic pop
+#endif
+    }
+    return keyWindow;
+}
+
 + (void)updateWithName:(NSString*)name position:(STAAdOrigin)pos size:(STABannerSize)size tag:(NSString*)tag {
     if (_sAds == nil) {
         _sAds = [[NSMutableDictionary alloc] init];
@@ -58,7 +86,7 @@ static NSMutableDictionary<NSString*, STAUnityBanneriOS*>* _sAds;
         adPreferences.adTag = tag;
         [self.startAppBanner setAdPreferneces:adPreferences];
         
-        UIView* rootView = [self.class topViewControllerWithRootViewController:[UIApplication sharedApplication].keyWindow.rootViewController].view;
+        UIView *rootView = [self.class topViewControllerWithRootViewController:[self.class sta_keyWindow].rootViewController].view;
         [rootView addSubview:self.startAppBanner];
         self.delegateName = name;
     }
